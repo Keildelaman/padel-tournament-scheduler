@@ -17,7 +17,7 @@ export function Header() {
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between h-14">
           <h1 className="text-lg font-bold tracking-tight">
-            {state.tournament?.name ?? 'Padel Tournament'}
+            {state.tournament?.name ?? 'OidaPadel'}
           </h1>
           <nav className="flex gap-1">
             {navItems.map(item => {
