@@ -44,15 +44,16 @@ export function SetupPage() {
   const [courts, setCourts] = useState(draft?.courts ?? 1)
   const [rounds, setRounds] = useState(draft?.rounds ?? 6)
   const [openEnded, setOpenEnded] = useState(draft?.openEnded ?? false)
+  const [courtNames, setCourtNames] = useState<string[]>(draft?.courtNames ?? [])
   const [error, setError] = useState<string | null>(null)
   const [preview, setPreview] = useState<SchedulePreviewData | null>(null)
 
   useEffect(() => {
     dispatch({
       type: 'SAVE_SETUP_DRAFT',
-      payload: { name, scoringMode, pointsPerMatch, playerNames, courts, rounds, openEnded },
+      payload: { name, scoringMode, pointsPerMatch, playerNames, courts, rounds, openEnded, courtNames },
     })
-  }, [name, scoringMode, pointsPerMatch, playerNames, courts, rounds, openEnded, dispatch])
+  }, [name, scoringMode, pointsPerMatch, playerNames, courts, rounds, openEnded, courtNames, dispatch])
 
   const playerRefs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -136,6 +137,8 @@ export function SetupPage() {
 
   const handleConfirmStart = () => {
     if (!preview) return
+    const finalCourtNames = courtNames.slice(0, eCourts)
+    const hasCustomNames = finalCourtNames.some(n => n.trim().length > 0)
     dispatch({
       type: 'START_TOURNAMENT',
       payload: {
@@ -146,6 +149,7 @@ export function SetupPage() {
         scoringConfig: { mode: scoringMode, pointsPerMatch },
         rounds: preview.rounds,
         openEnded,
+        courtNames: hasCustomNames ? finalCourtNames.map((n, i) => n.trim() || `Court ${i + 1}`) : undefined,
       },
     })
   }
@@ -379,6 +383,29 @@ export function SetupPage() {
                 <p className="text-gray-400 italic">Play as many rounds as you like. Finish the tournament at any time.</p>
               )}
             </div>
+
+            {eCourts > 0 && (
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Court Names <span className="text-gray-400 font-normal">(optional)</span></label>
+                <div className="space-y-2">
+                  {Array.from({ length: eCourts }, (_, i) => (
+                    <input
+                      key={i}
+                      type="text"
+                      value={courtNames[i] ?? ''}
+                      onChange={e => {
+                        const updated = [...courtNames]
+                        while (updated.length <= i) updated.push('')
+                        updated[i] = e.target.value
+                        setCourtNames(updated)
+                      }}
+                      placeholder={`Court ${i + 1}`}
+                      className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </Card>
         </div>
       </div>

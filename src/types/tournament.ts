@@ -34,6 +34,7 @@ export interface SetupDraft {
   courts: number
   rounds: number
   openEnded: boolean
+  courtNames?: string[]
 }
 
 export type TournamentPhase = 'setup' | 'playing' | 'finished'
@@ -50,4 +51,5 @@ export interface Tournament {
   phase: TournamentPhase
   createdAt: number
   openEnded?: boolean
+  courtNames?: string[]
 }

@@ -12,7 +12,7 @@ export const initialState: TournamentState = {
 export function tournamentReducer(state: TournamentState, action: TournamentAction): TournamentState {
   switch (action.type) {
     case 'START_TOURNAMENT': {
-      const { name, players, courts, totalRounds, scoringConfig, rounds, openEnded } = action.payload
+      const { name, players, courts, totalRounds, scoringConfig, rounds, openEnded, courtNames } = action.payload
       const effectiveRounds = openEnded ? OPEN_ENDED_BATCH_SIZE : totalRounds
 
       return {
@@ -28,6 +28,7 @@ export function tournamentReducer(state: TournamentState, action: TournamentActi
           phase: 'playing',
           createdAt: Date.now(),
           openEnded: openEnded || false,
+          courtNames,
         },
         currentPage: 'round',
         viewingRound: 1,

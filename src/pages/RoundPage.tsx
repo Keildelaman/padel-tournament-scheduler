@@ -134,7 +134,7 @@ export function RoundPage() {
             match={match}
             scoringConfig={tournament.scoringConfig}
             playerNames={playerNames}
-            courtLabel={`Court ${match.courtIndex + 1}`}
+            courtLabel={tournament.courtNames?.[match.courtIndex] || `Court ${match.courtIndex + 1}`}
             onSetScore={(s1, s2) => handleSetScore(match.courtIndex, s1, s2)}
             onSetWinner={(w) => handleSetWinner(match.courtIndex, w)}
             onClearScore={() => handleClearScore(match.courtIndex)}

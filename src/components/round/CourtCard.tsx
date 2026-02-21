@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import type { MatchAssignment, ScoringConfig } from '../../types'
 
 interface CourtCardProps {
@@ -111,7 +112,7 @@ function WinLossCourtLayout({
   }
 
   return (
-    <div className="relative mx-3 mb-3 rounded-lg overflow-hidden" style={{ aspectRatio: '300 / 200' }}>
+    <div className="relative mx-3 mb-3 rounded-lg" style={{ aspectRatio: '300 / 200' }}>
       <CourtBackground />
 
       {/* Overlay: two clickable halves */}
@@ -177,77 +178,179 @@ function PointsCourtLayout({
 
   const handleChange1 = (raw: string) => {
     const digits = raw.replace(/[^0-9]/g, '')
-    setText1(digits)
     if (digits === '') {
+      setText1('')
       setText2('')
       onClearScore()
       return
     }
     const s1 = Math.max(0, Math.min(max, parseInt(digits, 10)))
     const s2 = max - s1
+    setText1(String(s1))
     onSetScore(s1, s2)
   }
 
   const handleChange2 = (raw: string) => {
     const digits = raw.replace(/[^0-9]/g, '')
-    setText2(digits)
     if (digits === '') {
       setText1('')
+      setText2('')
       onClearScore()
       return
     }
     const s2 = Math.max(0, Math.min(max, parseInt(digits, 10)))
     const s1 = max - s2
+    setText2(String(s2))
     onSetScore(s1, s2)
   }
 
   return (
     <>
-      <div className="relative mx-3 mb-2 rounded-lg overflow-hidden" style={{ aspectRatio: '300 / 200' }}>
+      <div className="relative mx-3 mb-2 rounded-lg" style={{ aspectRatio: '300 / 200' }}>
         <CourtBackground />
 
         {/* Overlay: players + score */}
         <div className="absolute inset-0 flex items-center">
-          {/* Team 1 (left) */}
-          <div className="flex-1 flex flex-col items-center justify-center gap-2">
-            <PlayerPill name={team1Name1} color="blue" />
-            <PlayerPill name={team1Name2} color="blue" />
-          </div>
-
-          {/* Center: Score inputs */}
-          <div className="flex flex-col items-center justify-center gap-1 px-2">
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
+          {/* Team 1 (left): names left, score right near net */}
+          <div className="flex-1 flex items-center justify-center gap-2">
+            <div className="flex flex-col items-center gap-1.5">
+              <PlayerPill name={team1Name1} color="blue" />
+              <PlayerPill name={team1Name2} color="blue" />
+            </div>
+            <ScoreInput
               value={text1}
-              onChange={e => handleChange1(e.target.value)}
+              max={max}
+              color="blue"
               disabled={disabled}
-              placeholder="–"
-              className="w-10 h-8 border-2 border-white/60 rounded text-center text-sm font-bold focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50 bg-white/90 text-team-blue"
-            />
-            <span className="text-[10px] text-white/80 font-medium">vs</span>
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              value={text2}
-              onChange={e => handleChange2(e.target.value)}
-              disabled={disabled}
-              placeholder="–"
-              className="w-10 h-8 border-2 border-white/60 rounded text-center text-sm font-bold focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50 bg-white/90 text-team-red"
+              onChange={handleChange1}
+              onSelect={s1 => { onSetScore(s1, max - s1) }}
+              onClear={onClearScore}
             />
           </div>
 
-          {/* Team 2 (right) */}
-          <div className="flex-1 flex flex-col items-center justify-center gap-2">
-            <PlayerPill name={team2Name1} color="red" />
-            <PlayerPill name={team2Name2} color="red" />
+          {/* Team 2 (right): score left near net, names right */}
+          <div className="flex-1 flex items-center justify-center gap-2">
+            <ScoreInput
+              value={text2}
+              max={max}
+              color="red"
+              disabled={disabled}
+              onChange={handleChange2}
+              onSelect={s2 => { onSetScore(max - s2, s2) }}
+              onClear={onClearScore}
+            />
+            <div className="flex flex-col items-center gap-1.5">
+              <PlayerPill name={team2Name1} color="red" />
+              <PlayerPill name={team2Name2} color="red" />
+            </div>
           </div>
         </div>
       </div>
 
       <p className="text-[10px] text-gray-400 text-center pb-2">Total: {max} points</p>
+    </>
+  )
+}
+
+/* ─── Score Input with Number Picker ─── */
+
+function ScoreInput({ value, max, color, disabled, onChange, onSelect, onClear }: {
+  value: string
+  max: number
+  color: 'blue' | 'red'
+  disabled?: boolean
+  onChange: (raw: string) => void
+  onSelect: (n: number) => void
+  onClear: () => void
+}) {
+  const [open, setOpen] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+  const [pos, setPos] = useState({ top: 0, left: 0 })
+
+  const updatePos = useCallback(() => {
+    if (!inputRef.current) return
+    const rect = inputRef.current.getBoundingClientRect()
+    setPos({ top: rect.bottom + 4, left: rect.left + rect.width / 2 })
+  }, [])
+
+  useEffect(() => {
+    if (!open) return
+    updatePos()
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node
+      if (inputRef.current?.contains(target)) return
+      if (panelRef.current?.contains(target)) return
+      setOpen(false)
+    }
+    const handleScroll = () => updatePos()
+    document.addEventListener('mousedown', handleClickOutside)
+    window.addEventListener('scroll', handleScroll, true)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('scroll', handleScroll, true)
+    }
+  }, [open, updatePos])
+
+  const textColor = color === 'blue' ? 'text-team-blue' : 'text-team-red'
+  const currentNum = value === '' ? null : parseInt(value, 10)
+
+  return (
+    <>
+      <input
+        ref={inputRef}
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        onFocus={() => !disabled && setOpen(true)}
+        disabled={disabled}
+        placeholder="–"
+        className={`w-10 h-8 border-2 border-white/60 rounded text-center text-sm font-bold focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50 bg-white/90 cursor-pointer ${textColor}`}
+      />
+      {open && !disabled && createPortal(
+        <div
+          ref={panelRef}
+          className="fixed z-50 bg-white rounded-lg shadow-lg border border-gray-200 p-2 w-max max-w-48 -translate-x-1/2"
+          style={{ top: pos.top, left: pos.left }}
+        >
+          <div className="grid grid-cols-5 gap-1">
+            {Array.from({ length: max + 1 }, (_, n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => {
+                  onSelect(n)
+                  setOpen(false)
+                }}
+                className={`w-8 h-8 rounded text-xs font-bold transition-colors ${
+                  currentNum === n
+                    ? color === 'blue'
+                      ? 'bg-team-blue text-white'
+                      : 'bg-team-red text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+          {currentNum != null && (
+            <button
+              type="button"
+              onClick={() => {
+                onClear()
+                setOpen(false)
+              }}
+              className="mt-1.5 w-full text-xs text-gray-400 hover:text-red-500 py-1"
+            >
+              Clear
+            </button>
+          )}
+        </div>,
+        document.body,
+      )}
     </>
   )
 }

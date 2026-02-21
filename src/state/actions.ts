@@ -3,7 +3,7 @@ import type { Player, ScoringConfig, Round } from '../types'
 export type Page = 'setup' | 'round' | 'leaderboard' | 'simulator'
 
 export type TournamentAction =
-  | { type: 'START_TOURNAMENT'; payload: { name: string; players: Player[]; courts: number; totalRounds: number; scoringConfig: ScoringConfig; rounds: Round[]; openEnded?: boolean } }
+  | { type: 'START_TOURNAMENT'; payload: { name: string; players: Player[]; courts: number; totalRounds: number; scoringConfig: ScoringConfig; rounds: Round[]; openEnded?: boolean; courtNames?: string[] } }
   | { type: 'SET_SCORE'; payload: { roundNumber: number; courtIndex: number; score1: number; score2: number } }
   | { type: 'SET_WINLOSS'; payload: { roundNumber: number; courtIndex: number; winner: 1 | 2 } }
   | { type: 'COMPLETE_ROUND'; payload: { roundNumber: number } }
