@@ -51,6 +51,8 @@ export function SetupPage() {
   const [error, setError] = useState<string | null>(null)
   const [preview, setPreview] = useState<SchedulePreviewData | null>(null)
   const [generating, setGenerating] = useState(false)
+  const [editingName, setEditingName] = useState(false)
+  const nameInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     dispatch({
@@ -174,7 +176,7 @@ export function SetupPage() {
       <div className="max-w-3xl mx-auto space-y-4">
         <Card>
           <h2 className="text-xl font-bold mb-2">{t('setup.inProgress')}</h2>
-          <p className="text-gray-600 mb-4">
+          <p className="text-text-muted mb-4">
             {t('setup.inProgressDesc', { name: state.tournament.name, current: state.tournament.currentRound, total: totalPart })}
           </p>
           <div className="flex gap-3">
@@ -197,7 +199,7 @@ export function SetupPage() {
         <h2 className="text-2xl font-bold border-l-4 border-primary pl-3">{t('preview.title')}</h2>
 
         {openEnded && (
-          <p className="text-sm text-gray-500 italic">{t('preview.openEndedHint')}</p>
+          <p className="text-sm text-text-muted italic">{t('preview.openEndedHint')}</p>
         )}
 
         <FairnessCards metrics={preview.metrics} />
@@ -211,7 +213,7 @@ export function SetupPage() {
             <HeatmapGrid
               matrix={preview.partnerMatrix}
               labels={preview.playerLabels}
-              colorLow="#eff6ff"
+              colorLow="#1e3a5f"
               colorHigh="#1d4ed8"
               title={t('preview.partnerFrequency')}
             />
@@ -220,7 +222,7 @@ export function SetupPage() {
             <HeatmapGrid
               matrix={preview.opponentMatrix}
               labels={preview.playerLabels}
-              colorLow="#fef2f2"
+              colorLow="#3b1c1c"
               colorHigh="#dc2626"
               title={t('preview.opponentFrequency')}
             />
@@ -228,14 +230,15 @@ export function SetupPage() {
         </div>
 
         <div className="flex justify-between gap-3">
-          <Button variant="secondary" onClick={() => setPreview(null)}>
+          <Button variant="secondary" onClick={() => setPreview(null)} disabled={generating}>
             {t('preview.back')}
           </Button>
           <div className="flex gap-3">
-            <Button variant="secondary" onClick={handleRegenerate} disabled={generating}>
+            <Button variant="secondary" onClick={handleRegenerate} disabled={generating}
+              className={generating ? 'animate-pulse' : ''}>
               {generating ? t('setup.generating') : t('preview.regenerate')}
             </Button>
-            <Button onClick={handleConfirmStart}>
+            <Button onClick={handleConfirmStart} disabled={generating}>
               {t('preview.confirmStart')}
             </Button>
           </div>
@@ -246,47 +249,70 @@ export function SetupPage() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <h2 className="text-2xl font-bold border-l-4 border-primary pl-3">{t('setup.title')}</h2>
-
-      {/* Tournament Name */}
-      <Card>
-        <label className="block text-sm font-medium text-gray-700 mb-1">{t('setup.tournamentName')}</label>
-        <input
-          type="text"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          placeholder={DEFAULT_TOURNAMENT_NAME}
-        />
-      </Card>
+      {/* Inline-editable tournament title */}
+      <div className="flex items-center gap-2 border-l-4 border-primary pl-3">
+        {editingName ? (
+          <input
+            ref={nameInputRef}
+            type="text"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            onBlur={() => {
+              if (!name.trim()) setName(DEFAULT_TOURNAMENT_NAME)
+              setEditingName(false)
+            }}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                if (!name.trim()) setName(DEFAULT_TOURNAMENT_NAME)
+                setEditingName(false)
+              }
+            }}
+            className="text-2xl font-bold bg-transparent border-b-2 border-border-focus text-text focus:outline-none w-full"
+            autoFocus
+          />
+        ) : (
+          <>
+            <h2 className="text-2xl font-bold truncate">{name || DEFAULT_TOURNAMENT_NAME}</h2>
+            <button
+              onClick={() => setEditingName(true)}
+              className="text-text-muted hover:text-text transition-colors shrink-0"
+              title={t('setup.tournamentName')}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.58 13.42a4 4 0 00-.885 1.343z" />
+              </svg>
+            </button>
+          </>
+        )}
+      </div>
 
       {/* Scoring Mode */}
       <Card>
-        <label className="block text-sm font-medium text-gray-700 mb-2">{t('setup.scoringMode')}</label>
-        <div className="flex gap-2">
+        <label className="block text-sm font-semibold text-text mb-2">{t('setup.scoringMode')}</label>
+        <div className="flex gap-1 bg-surface-input rounded-lg p-1">
           <button
             onClick={() => setScoringMode('points')}
-            className={`flex-1 py-2 px-3 rounded-lg border text-sm font-medium transition-colors ${
+            className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
               scoringMode === 'points'
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                ? 'bg-primary-light text-white shadow-md'
+                : 'text-text-muted hover:text-text'
             }`}
           >
             {t('setup.scoringPoints')}
           </button>
           <button
             onClick={() => setScoringMode('winloss')}
-            className={`flex-1 py-2 px-3 rounded-lg border text-sm font-medium transition-colors ${
+            className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
               scoringMode === 'winloss'
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                ? 'bg-primary-light text-white shadow-md'
+                : 'text-text-muted hover:text-text'
             }`}
           >
             {t('setup.scoringWinLoss')}
           </button>
         </div>
         {scoringMode === 'points' && (
-          <div className="mt-3">
+          <div className="mt-3 flex flex-col items-center">
             <NumberInput
               label={t('setup.pointsPerMatch')}
               value={pointsPerMatch}
@@ -294,23 +320,27 @@ export function SetupPage() {
               min={4}
               max={100}
             />
-            <p className="text-xs text-gray-500 mt-1">{t('setup.pointsPerMatchHint')}</p>
+            <p className="text-xs text-text-muted mt-1">{t('setup.pointsPerMatchHint')}</p>
           </div>
         )}
       </Card>
 
-      {/* Two-column grid: Players + Courts/Rounds */}
+      {/* Two-column grid: Players + Rounds/Courts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Players */}
         <Card>
-          <label className="text-sm font-medium text-gray-700 mb-3 block">
+          <label className="text-sm font-semibold text-text mb-3 block">
             {t('setup.players', { count: validNames.length })}
           </label>
-          <div className="space-y-2">
+          <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
             {playerNames.map((pName, i) => {
               const isAutoGrowSlot = i === playerNames.length - 1 && pName.trim() === ''
               return (
-                <div key={i} className="flex gap-2">
+                <div key={i} className="flex items-center gap-2">
+                  {!isAutoGrowSlot && (
+                    <span className="text-xs text-text-muted w-5 text-right tabular-nums">{i + 1}.</span>
+                  )}
+                  {isAutoGrowSlot && <span className="w-5" />}
                   <input
                     ref={el => { playerRefs.current[i] = el }}
                     type="text"
@@ -318,14 +348,14 @@ export function SetupPage() {
                     onChange={e => updatePlayer(i, e.target.value)}
                     onKeyDown={e => handlePlayerKeyDown(i, e)}
                     placeholder={isAutoGrowSlot ? t('setup.addPlayer') : t('setup.playerPlaceholder', { n: i + 1 })}
-                    className={`flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary ${
-                      isAutoGrowSlot ? 'border-dashed border-gray-300' : 'border-gray-300'
+                    className={`flex-1 px-3 py-2 border rounded-lg text-sm bg-surface-input text-text focus:outline-none focus:border-border-focus focus:ring-1 focus:ring-border-focus ${
+                      isAutoGrowSlot ? 'border-dashed border-border/50' : 'border-border'
                     }`}
                   />
                   {!isAutoGrowSlot && (
                     <button
                       onClick={() => removePlayer(i)}
-                      className="w-9 h-9 flex items-center justify-center text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50"
+                      className="w-9 h-9 flex items-center justify-center text-text-muted hover:text-red-400 rounded-lg hover:bg-red-500/10"
                     >
                       &times;
                     </button>
@@ -336,43 +366,36 @@ export function SetupPage() {
           </div>
         </Card>
 
-        {/* Courts & Rounds */}
+        {/* Rounds + Courts */}
         <div className="space-y-6">
+          {/* Rounds card */}
           <Card>
-            {/* Round mode toggle */}
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('setup.roundMode')}</label>
-            <div className="flex gap-2 mb-4">
+            <label className="block text-sm font-semibold text-text mb-2">{t('setup.roundMode')}</label>
+            <div className="flex gap-1 bg-surface-input rounded-lg p-1 mb-4">
               <button
                 onClick={() => setOpenEnded(false)}
-                className={`flex-1 py-2 px-3 rounded-lg border text-sm font-medium transition-colors ${
+                className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
                   !openEnded
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                    ? 'bg-primary-light text-white shadow-md'
+                    : 'text-text-muted hover:text-text'
                 }`}
               >
                 {t('setup.fixedRounds')}
               </button>
               <button
                 onClick={() => setOpenEnded(true)}
-                className={`flex-1 py-2 px-3 rounded-lg border text-sm font-medium transition-colors ${
+                className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
                   openEnded
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                    ? 'bg-primary-light text-white shadow-md'
+                    : 'text-text-muted hover:text-text'
                 }`}
               >
                 {t('setup.openEnded')}
               </button>
             </div>
 
-            <div className={openEnded ? '' : 'grid grid-cols-2 gap-6'}>
-              <NumberInput
-                label={t('setup.courts')}
-                value={courts}
-                onChange={setCourts}
-                min={MIN_COURTS}
-                max={Math.max(1, maxCourts)}
-              />
-              {!openEnded && (
+            {!openEnded && (
+              <>
                 <NumberInput
                   label={t('setup.rounds')}
                   value={rounds}
@@ -380,35 +403,46 @@ export function SetupPage() {
                   min={MIN_ROUNDS}
                   max={MAX_ROUNDS}
                 />
-              )}
-            </div>
-            <div className="mt-2 text-xs text-gray-500 space-y-1">
-              <p>{t('setup.courtInfo', { courts: eCourts, playing: eCourts * PLAYERS_PER_COURT, sitting: Math.max(0, validNames.length - eCourts * PLAYERS_PER_COURT) })}</p>
-              {!openEnded && validNames.length >= MIN_PLAYERS && (
-                <div className="flex items-center gap-1">
-                  <button
-                    className="text-primary hover:underline"
-                    onClick={() => setRounds(suggested)}
-                  >
-                    {t('setup.suggested', { n: suggested })}
-                  </button>
-                  <div className="relative group">
-                    <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-200 text-gray-500 text-[10px] font-bold cursor-help">?</span>
-                    <div className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-56 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg shadow-lg z-10">
-                      {t('setup.suggestedTooltip')}
-                      <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800" />
+                {validNames.length >= MIN_PLAYERS && (
+                  <div className="mt-2 flex items-center gap-1 text-xs text-text-muted">
+                    <button
+                      className="text-primary hover:underline"
+                      onClick={() => setRounds(suggested)}
+                    >
+                      {t('setup.suggested', { n: suggested })}
+                    </button>
+                    <div className="relative group">
+                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-white/10 text-text-muted text-[10px] font-bold cursor-help">?</span>
+                      <div className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-56 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg shadow-lg z-10">
+                        {t('setup.suggestedTooltip')}
+                        <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800" />
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-              {openEnded && (
-                <p className="text-gray-400 italic">{t('setup.openEndedHint')}</p>
-              )}
-            </div>
+                )}
+              </>
+            )}
+            {openEnded && (
+              <p className="text-xs text-text-muted italic">{t('setup.openEndedHint')}</p>
+            )}
+          </Card>
+
+          {/* Courts card */}
+          <Card>
+            <NumberInput
+              label={t('setup.courts')}
+              value={courts}
+              onChange={setCourts}
+              min={MIN_COURTS}
+              max={Math.max(1, maxCourts)}
+            />
+            <p className="mt-2 text-xs text-text-muted">
+              {t('setup.courtInfo', { courts: eCourts, playing: eCourts * PLAYERS_PER_COURT, sitting: Math.max(0, validNames.length - eCourts * PLAYERS_PER_COURT) })}
+            </p>
 
             {eCourts > 0 && (
               <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('setup.courtNames')} <span className="text-gray-400 font-normal">{t('setup.courtNamesOptional')}</span></label>
+                <label className="block text-sm font-semibold text-text mb-2">{t('setup.courtNames')} <span className="text-text-muted/60 font-normal">{t('setup.courtNamesOptional')}</span></label>
                 <div className="space-y-2">
                   {Array.from({ length: eCourts }, (_, i) => (
                     <input
@@ -422,7 +456,7 @@ export function SetupPage() {
                         setCourtNames(updated)
                       }}
                       placeholder={t('setup.courtPlaceholder', { n: i + 1 })}
-                      className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-1.5 border border-border rounded-lg text-sm bg-surface-input text-text focus:outline-none focus:border-border-focus focus:ring-1 focus:ring-border-focus"
                     />
                   ))}
                 </div>
@@ -433,7 +467,7 @@ export function SetupPage() {
       </div>
 
       {error && (
-        <p className="text-red-600 text-sm font-medium">{error}</p>
+        <p className="text-red-400 text-sm font-medium">{error}</p>
       )}
 
       <Button fullWidth onClick={handleStart} disabled={validNames.length < MIN_PLAYERS || generating}>

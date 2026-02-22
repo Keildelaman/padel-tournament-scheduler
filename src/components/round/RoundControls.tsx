@@ -30,7 +30,7 @@ export function RoundControls({
         {t('roundControls.previous')}
       </Button>
 
-      <span className="text-sm text-gray-500 font-medium">
+      <span className="text-sm text-text-muted font-medium">
         {t('roundControls.round', { current: roundNumber, total: totalPart })}
       </span>
 

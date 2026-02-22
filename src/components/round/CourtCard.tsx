@@ -315,7 +315,7 @@ function ScoreInput({ value, max, color, disabled, onChange, onSelect, onClear }
       {open && !disabled && createPortal(
         <div
           ref={panelRef}
-          className="fixed z-50 bg-white rounded-lg shadow-lg border border-gray-200 p-2 w-max max-w-48 -translate-x-1/2"
+          className="fixed z-50 bg-surface rounded-lg shadow-xl shadow-black/30 border border-border p-2 w-max max-w-48 -translate-x-1/2"
           style={{ top: pos.top, left: pos.left }}
         >
           <div className="grid grid-cols-5 gap-1">
@@ -327,12 +327,12 @@ function ScoreInput({ value, max, color, disabled, onChange, onSelect, onClear }
                   onSelect(n)
                   setOpen(false)
                 }}
-                className={`w-8 h-8 rounded text-xs font-bold transition-colors ${
+                className={`w-8 h-8 rounded-md text-xs font-bold transition-colors ${
                   currentNum === n
                     ? color === 'blue'
                       ? 'bg-team-blue text-white'
                       : 'bg-team-red text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-surface-alt text-text hover:bg-gray-600'
                 }`}
               >
                 {n}
@@ -346,7 +346,7 @@ function ScoreInput({ value, max, color, disabled, onChange, onSelect, onClear }
                 onClear()
                 setOpen(false)
               }}
-              className="mt-1.5 w-full text-xs text-gray-400 hover:text-red-500 py-1"
+              className="mt-1.5 w-full text-xs text-text-muted hover:text-red-400 py-1"
             >
               {t('court.clear')}
             </button>
@@ -366,7 +366,7 @@ function PlayerPill({ name, color }: { name: string; color: 'blue' | 'red' }) {
     : 'border-team-red text-team-red'
 
   return (
-    <span className={`inline-block px-3 py-1 bg-white rounded-full border-2 text-sm font-semibold shadow ${colors}`}>
+    <span className={`inline-block px-3 py-1 bg-white/90 rounded-full border-2 text-sm font-semibold shadow-sm ${colors}`}>
       {name}
     </span>
   )

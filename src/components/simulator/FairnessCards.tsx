@@ -67,9 +67,9 @@ export function FairnessCards({ metrics }: FairnessCardsProps) {
   ]
 
   const colorMap = {
-    good: 'text-fair-good border-fair-good/30 bg-green-50',
-    warn: 'text-fair-warn border-fair-warn/30 bg-yellow-50',
-    bad: 'text-fair-bad border-fair-bad/30 bg-red-50',
+    good: 'text-fair-good border-fair-good/40 bg-green-900/30',
+    warn: 'text-fair-warn border-fair-warn/40 bg-yellow-900/30',
+    bad: 'text-fair-bad border-fair-bad/40 bg-red-900/30',
   }
 
   return (
@@ -77,7 +77,7 @@ export function FairnessCards({ metrics }: FairnessCardsProps) {
       {items.map(item => (
         <div key={item.labelKey} className={`relative group rounded-lg border p-3 text-center ${colorMap[item.level]}`}>
           <div className="absolute top-1.5 right-1.5">
-            <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-black/10 text-[10px] font-bold cursor-help opacity-60 group-hover:opacity-100 transition-opacity">?</span>
+            <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-white/10 text-[10px] font-bold cursor-help opacity-60 group-hover:opacity-100 transition-opacity">?</span>
           </div>
           <div className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-56 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg shadow-lg z-10 font-normal text-left">
             {t(item.tooltipKey)}

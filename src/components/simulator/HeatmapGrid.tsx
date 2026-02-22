@@ -14,14 +14,14 @@ export function HeatmapGrid({ matrix, labels, colorLow, colorHigh, title }: Heat
   const maxVal = Math.max(1, ...matrix.flat())
 
   const cellColor = (val: number): string => {
-    if (val === 0) return '#f9fafb'
+    if (val === 0) return '#1e293b'
     const t = val / maxVal
     return interpolateColor(colorLow, colorHigh, t)
   }
 
   return (
     <div>
-      <h4 className="text-sm font-semibold text-gray-700 mb-2">{title}</h4>
+      <h4 className="text-sm font-semibold text-text mb-2">{title}</h4>
       <div className="overflow-x-auto">
         <div
           className="inline-grid gap-px"
@@ -34,14 +34,14 @@ export function HeatmapGrid({ matrix, labels, colorLow, colorHigh, title }: Heat
           <div />
           {/* Column headers */}
           {labels.map((l, i) => (
-            <div key={`ch-${i}`} className="text-[10px] text-gray-500 text-center font-medium truncate px-0.5">
+            <div key={`ch-${i}`} className="text-[10px] text-text-muted text-center font-medium truncate px-0.5">
               {l.slice(0, 3)}
             </div>
           ))}
           {/* Rows */}
           {labels.map((rowLabel, i) => (
             <>
-              <div key={`rh-${i}`} className="text-[10px] text-gray-500 text-right pr-1 font-medium flex items-center justify-end">
+              <div key={`rh-${i}`} className="text-[10px] text-text-muted text-right pr-1 font-medium flex items-center justify-end">
                 {rowLabel.slice(0, 5)}
               </div>
               {labels.map((colLabel, j) => {
@@ -51,8 +51,8 @@ export function HeatmapGrid({ matrix, labels, colorLow, colorHigh, title }: Heat
                     key={`c-${i}-${j}`}
                     className="rounded-sm flex items-center justify-center text-[10px] font-medium cursor-default relative"
                     style={{
-                      backgroundColor: i === j ? '#e5e7eb' : cellColor(val),
-                      color: val > maxVal * 0.6 ? 'white' : '#374151',
+                      backgroundColor: i === j ? '#334155' : cellColor(val),
+                      color: val > maxVal * 0.6 ? 'white' : '#e2e8f0',
                       minWidth: 28,
                       minHeight: 28,
                     }}

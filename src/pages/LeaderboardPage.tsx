@@ -12,7 +12,7 @@ export function LeaderboardPage() {
 
   if (!tournament) {
     return (
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-text-muted">
         <p>{t('leaderboard.noData')}</p>
         <button
           className="mt-3 text-primary hover:underline"
@@ -59,22 +59,22 @@ export function LeaderboardPage() {
       <Card>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
           <div>
-            <div className="text-2xl font-bold text-primary">{tournament.players.length}</div>
-            <div className="text-xs text-gray-500">{t('leaderboard.players')}</div>
+            <div className="text-2xl font-bold text-primary-surface">{tournament.players.length}</div>
+            <div className="text-xs text-text-muted">{t('leaderboard.players')}</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-primary">{completedRounds}</div>
-            <div className="text-xs text-gray-500">{t('leaderboard.roundsPlayed')}</div>
+            <div className="text-2xl font-bold text-primary-surface">{completedRounds}</div>
+            <div className="text-xs text-text-muted">{t('leaderboard.roundsPlayed')}</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-primary">{tournament.courts}</div>
-            <div className="text-xs text-gray-500">{t('leaderboard.courts')}</div>
+            <div className="text-2xl font-bold text-primary-surface">{tournament.courts}</div>
+            <div className="text-xs text-text-muted">{t('leaderboard.courts')}</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-primary">
+            <div className="text-2xl font-bold text-primary-surface">
               {tournament.scoringConfig.mode === 'points' ? t('leaderboard.pts', { n: tournament.scoringConfig.pointsPerMatch }) : t('leaderboard.wl')}
             </div>
-            <div className="text-xs text-gray-500">{t('leaderboard.scoring')}</div>
+            <div className="text-xs text-text-muted">{t('leaderboard.scoring')}</div>
           </div>
         </div>
       </Card>

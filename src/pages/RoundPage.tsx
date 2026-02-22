@@ -65,7 +65,7 @@ export function RoundPage() {
 
   if (!tournament) {
     return (
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-text-muted">
         <p>{t('round.noTournament')}</p>
         <button
           className="mt-3 text-primary hover:underline"
@@ -126,7 +126,7 @@ export function RoundPage() {
   return (
     <div className="space-y-6">
       {tournament.openEnded ? (
-        <div className="text-sm text-gray-500 font-medium">
+        <div className="text-sm text-text-muted font-medium">
           {t('round.roundsCompleted', { n: completedRounds })}
         </div>
       ) : (
@@ -170,7 +170,7 @@ export function RoundPage() {
       />
 
       {extending && (
-        <p className="text-sm text-gray-400 animate-pulse text-center">{t('round.extending')}</p>
+        <p className="text-sm text-text-muted animate-pulse text-center">{t('round.extending')}</p>
       )}
 
       <RoundStats tournament={tournament} />

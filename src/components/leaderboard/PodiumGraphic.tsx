@@ -21,17 +21,17 @@ export function PodiumGraphic({ top3 }: PodiumGraphicProps) {
         return (
           <g key={place}>
             {/* Podium block */}
-            <rect x={x} y={blockY} width={70} height={height} rx={4} fill={color} fillOpacity={0.2} stroke={color} strokeWidth="2" />
+            <rect x={x} y={blockY} width={70} height={height} rx={4} fill={color} fillOpacity={0.3} stroke={color} strokeWidth="2" />
             {/* Place number */}
             <text x={x + 35} y={blockY + height / 2 + 6} textAnchor="middle" fontSize="18" fontWeight="bold" fill={color}>
               {place}
             </text>
             {/* Name */}
-            <text x={x + 35} y={nameY} textAnchor="middle" fontSize="11" fontWeight="600" fill="#374151">
+            <text x={x + 35} y={nameY} textAnchor="middle" fontSize="11" fontWeight="600" fill="#e2e8f0">
               {entry.playerName.length > 10 ? entry.playerName.slice(0, 9) + '..' : entry.playerName}
             </text>
             {/* Points */}
-            <text x={x + 35} y={nameY - 14} textAnchor="middle" fontSize="10" fill="#6b7280">
+            <text x={x + 35} y={nameY - 14} textAnchor="middle" fontSize="10" fill="#94a3b8">
               {entry.points} pts
             </text>
           </g>

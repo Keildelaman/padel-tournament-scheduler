@@ -70,12 +70,12 @@ export function SimulatorPage() {
           )}
         </div>
         <div className="flex items-center gap-4 mt-4">
-          <div className="flex gap-2">
+          <div className="flex gap-1 bg-surface-input rounded-lg p-1">
             <div className="relative group">
               <button
                 onClick={() => setMode('greedy')}
-                className={`px-3 py-1.5 rounded-lg border text-xs font-medium ${
-                  mode === 'greedy' ? 'border-primary bg-primary/10 text-primary' : 'border-gray-300 text-gray-600'
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                  mode === 'greedy' ? 'bg-primary-light text-white shadow-md' : 'text-text-muted hover:text-text'
                 }`}
               >
                 {t('simulator.greedy')}
@@ -88,8 +88,8 @@ export function SimulatorPage() {
             <div className="relative group">
               <button
                 onClick={() => setMode('montecarlo')}
-                className={`px-3 py-1.5 rounded-lg border text-xs font-medium ${
-                  mode === 'montecarlo' ? 'border-primary bg-primary/10 text-primary' : 'border-gray-300 text-gray-600'
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                  mode === 'montecarlo' ? 'bg-primary-light text-white shadow-md' : 'text-text-muted hover:text-text'
                 }`}
               >
                 {t('simulator.monteCarlo')}
@@ -104,7 +104,7 @@ export function SimulatorPage() {
             {running ? t('simulator.running') : t('simulator.runSimulation')}
           </Button>
         </div>
-        <p className="text-xs text-gray-500 mt-2">
+        <p className="text-xs text-text-muted mt-2">
           {t('simulator.courtInfo', { courts: eCourts, playing: eCourts * 4, sitting: Math.max(0, playerCount - eCourts * 4) })}
         </p>
       </Card>
@@ -124,7 +124,7 @@ export function SimulatorPage() {
               <HeatmapGrid
                 matrix={result.partnerMatrix}
                 labels={result.playerLabels}
-                colorLow="#eff6ff"
+                colorLow="#1e3a5f"
                 colorHigh="#1d4ed8"
                 title={t('simulator.partnerFrequency')}
               />
@@ -133,7 +133,7 @@ export function SimulatorPage() {
               <HeatmapGrid
                 matrix={result.opponentMatrix}
                 labels={result.playerLabels}
-                colorLow="#fef2f2"
+                colorLow="#3b1c1c"
                 colorHigh="#dc2626"
                 title={t('simulator.opponentFrequency')}
               />

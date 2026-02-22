@@ -25,11 +25,11 @@ export function GenerationInfoBar({ info }: GenerationInfoBarProps) {
         : ''
 
   return (
-    <div className="flex flex-wrap gap-x-2 gap-y-1 text-xs text-gray-400 font-mono">
+    <div className="flex flex-wrap gap-x-2 gap-y-1 text-xs text-text-muted font-mono">
       <span>{t('gen.elapsed', { ms: info.elapsedMs })}</span>
-      <span className="text-gray-300">|</span>
+      <span className="text-text-muted/50">|</span>
       <span>{method}</span>
-      <span className="text-gray-300">|</span>
+      <span className="text-text-muted/50">|</span>
       <span>{matching}{matchingDetail}</span>
     </div>
   )
