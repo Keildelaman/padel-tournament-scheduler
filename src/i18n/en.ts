@@ -12,10 +12,20 @@ export const en: TranslationMap = {
   'setup.title': 'New Tournament',
   'setup.tournamentName': 'Tournament Name',
   'setup.scoringMode': 'Scoring Mode',
-  'setup.scoringPoints': 'Points to N',
+  'setup.scoringPoints': 'Points to Play',
+  'setup.scoringPointsToWin': 'Points to Win',
+  'setup.scoringTimed': 'Time Play',
   'setup.scoringWinLoss': 'Win / Loss',
+  'setup.scoringDesc.points': 'A fixed number of points is split between teams each match.',
+  'setup.scoringDesc.pointsToWin': 'Teams play until one reaches the target score.',
+  'setup.scoringDesc.timed': 'Teams play for a set duration, then enter final scores.',
+  'setup.scoringDesc.winloss': 'Simply pick the winning team — no scores needed.',
   'setup.pointsPerMatch': 'Points per match',
   'setup.pointsPerMatchHint': 'Total points split between teams (e.g. 6-4)',
+  'setup.targetScore': 'Target score',
+  'setup.targetScoreHint': 'First team to reach this score wins',
+  'setup.matchDuration': 'Match duration (minutes)',
+  'setup.matchDurationHint': 'Countdown timer shown during each round',
   'setup.players': 'Players ({count})',
   'setup.addPlayer': 'Add player...',
   'setup.playerPlaceholder': 'Player {n}',
@@ -48,6 +58,9 @@ export const en: TranslationMap = {
   'preview.back': 'Back',
   'preview.regenerate': 'Regenerate',
   'preview.confirmStart': 'Confirm & Start',
+  'preview.iterations': 'Iterations',
+  'preview.keepBest': 'Only keep if better',
+  'preview.keptBetter': 'New schedule was not better \u2014 keeping current one.',
   'preview.openEndedHint': 'The algorithm pre-calculates 30 rounds, but fairness is progressive \u2014 each round is individually optimized. You can stop at any time.',
 
   // Round page
@@ -93,6 +106,8 @@ export const en: TranslationMap = {
   'leaderboard.courts': 'Courts',
   'leaderboard.scoring': 'Scoring',
   'leaderboard.pts': '{n}pts',
+  'leaderboard.ptsToWin': 'First to {n}',
+  'leaderboard.timed': '{n} min',
   'leaderboard.wl': 'W/L',
   'leaderboard.newTournament': 'New Tournament',
 
@@ -165,6 +180,13 @@ export const en: TranslationMap = {
   'gen.budgetHits': 'budget hit {n}x',
   'gen.noBudgetHits': 'no budget hits',
   'gen.activePlayers': '{n} active players',
+
+  // Timer
+  'timer.start': 'Start',
+  'timer.pause': 'Pause',
+  'timer.resume': 'Resume',
+  'timer.reset': 'Reset',
+  'timer.finished': "Time's up!",
 
   // Modal
   'modal.cancel': 'Cancel',

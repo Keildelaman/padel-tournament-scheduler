@@ -18,15 +18,15 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen flex items-center justify-center p-8">
-          <div className="bg-white rounded-xl shadow-lg p-8 max-w-md text-center">
-            <h2 className="text-xl font-bold text-red-600 mb-2">Something went wrong</h2>
-            <p className="text-gray-600 text-sm mb-4">{this.state.error?.message}</p>
+          <div className="bg-surface rounded-xl shadow-2xl shadow-black/40 border border-border p-8 max-w-md text-center">
+            <h2 className="text-xl font-bold text-red-400 mb-2">Something went wrong</h2>
+            <p className="text-text-muted text-sm mb-4">{this.state.error?.message}</p>
             <button
               onClick={() => {
                 this.setState({ hasError: false, error: null })
                 window.location.reload()
               }}
-              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-light"
+              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-light transition-colors"
             >
               Reload
             </button>

@@ -3,9 +3,9 @@ import type { ButtonHTMLAttributes } from 'react'
 type Variant = 'primary' | 'secondary' | 'destructive'
 
 const variantClasses: Record<Variant, string> = {
-  primary: 'bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-500 hover:to-blue-400 shadow-lg shadow-blue-500/25',
-  secondary: 'bg-surface-alt text-text border border-border hover:bg-[#475569]',
-  destructive: 'bg-red-600 text-white hover:bg-red-500',
+  primary: 'bg-gradient-to-r from-primary to-primary-light text-white hover:from-primary-light hover:to-[#18d47e] shadow-lg shadow-primary/30 hover:shadow-primary-light/40',
+  secondary: 'bg-surface-alt/80 text-text border border-border hover:bg-[#2a3a30] hover:border-primary/30',
+  destructive: 'bg-red-700 text-white hover:bg-red-600 shadow-lg shadow-red-900/30',
 }
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

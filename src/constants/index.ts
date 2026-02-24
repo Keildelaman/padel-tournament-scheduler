@@ -6,6 +6,8 @@ export const PLAYERS_PER_COURT = 4
 export const MIN_ROUNDS = 1
 export const MAX_ROUNDS = 30
 export const DEFAULT_POINTS_PER_MATCH = 10
+export const DEFAULT_TARGET_SCORE = 24
+export const DEFAULT_MATCH_DURATION_MINUTES = 10
 export const DEFAULT_TOURNAMENT_NAME = 'Padel Americano'
 
 export const SCORING_PENALTIES = {

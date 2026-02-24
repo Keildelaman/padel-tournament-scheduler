@@ -12,10 +12,20 @@ export const de: TranslationMap = {
   'setup.title': 'Neues Turnier',
   'setup.tournamentName': 'Turniername',
   'setup.scoringMode': 'Wertungsmodus',
-  'setup.scoringPoints': 'Punkte auf N',
+  'setup.scoringPoints': 'Punkte verteilen',
+  'setup.scoringPointsToWin': 'Punkte zum Sieg',
+  'setup.scoringTimed': 'Zeitspiel',
   'setup.scoringWinLoss': 'Sieg / Niederlage',
+  'setup.scoringDesc.points': 'Eine feste Punktzahl wird pro Spiel zwischen den Teams aufgeteilt.',
+  'setup.scoringDesc.pointsToWin': 'Teams spielen, bis eines die Zielpunktzahl erreicht.',
+  'setup.scoringDesc.timed': 'Teams spielen eine festgelegte Zeit, dann werden die Punkte eingetragen.',
+  'setup.scoringDesc.winloss': 'Einfach das Gewinnerteam wählen — keine Punkte nötig.',
   'setup.pointsPerMatch': 'Punkte pro Spiel',
   'setup.pointsPerMatchHint': 'Gesamtpunkte werden zwischen Teams aufgeteilt (z.B. 6-4)',
+  'setup.targetScore': 'Zielpunktzahl',
+  'setup.targetScoreHint': 'Erstes Team das diese Punktzahl erreicht gewinnt',
+  'setup.matchDuration': 'Spieldauer (Minuten)',
+  'setup.matchDurationHint': 'Countdown-Timer wird während jeder Runde angezeigt',
   'setup.players': 'Spieler ({count})',
   'setup.addPlayer': 'Spieler hinzufügen...',
   'setup.playerPlaceholder': 'Spieler {n}',
@@ -48,6 +58,9 @@ export const de: TranslationMap = {
   'preview.back': 'Zurück',
   'preview.regenerate': 'Neu generieren',
   'preview.confirmStart': 'Bestätigen & Starten',
+  'preview.iterations': 'Iterationen',
+  'preview.keepBest': 'Nur übernehmen wenn besser',
+  'preview.keptBetter': 'Neuer Spielplan war nicht besser \u2014 aktueller wird beibehalten.',
   'preview.openEndedHint': 'Der Algorithmus berechnet 30 Runden voraus, aber die Fairness ist progressiv \u2014 jede Runde ist f\u00fcr sich optimiert. Ihr k\u00f6nnt jederzeit aufh\u00f6ren.',
 
   // Round page
@@ -93,6 +106,8 @@ export const de: TranslationMap = {
   'leaderboard.courts': 'Courts',
   'leaderboard.scoring': 'Wertung',
   'leaderboard.pts': '{n} Pkt',
+  'leaderboard.ptsToWin': 'Erster bis {n}',
+  'leaderboard.timed': '{n} Min',
   'leaderboard.wl': 'S/N',
   'leaderboard.newTournament': 'Neues Turnier',
 
@@ -165,6 +180,13 @@ export const de: TranslationMap = {
   'gen.budgetHits': 'Budget {n}x erreicht',
   'gen.noBudgetHits': 'kein Budget erreicht',
   'gen.activePlayers': '{n} aktive Spieler',
+
+  // Timer
+  'timer.start': 'Start',
+  'timer.pause': 'Pause',
+  'timer.resume': 'Weiter',
+  'timer.reset': 'Zurücksetzen',
+  'timer.finished': 'Zeit abgelaufen!',
 
   // Modal
   'modal.cancel': 'Abbrechen',

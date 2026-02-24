@@ -62,7 +62,7 @@ export function NumberInput({ value, onChange, min, max, label, className = '' }
           type="button"
           onClick={decrement}
           disabled={min != null && value <= min}
-          className="w-10 h-10 rounded-lg bg-surface-alt border border-border flex items-center justify-center text-lg font-bold text-text hover:bg-[#475569] disabled:opacity-30 disabled:cursor-not-allowed"
+          className="w-10 h-10 rounded-lg bg-surface-alt border border-border flex items-center justify-center text-lg font-bold text-text hover:bg-[#2a3a30] hover:border-primary/40 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           -
         </button>
@@ -80,7 +80,7 @@ export function NumberInput({ value, onChange, min, max, label, className = '' }
           type="button"
           onClick={increment}
           disabled={max != null && value >= max}
-          className="w-10 h-10 rounded-lg bg-surface-alt border border-border flex items-center justify-center text-lg font-bold text-text hover:bg-[#475569] disabled:opacity-30 disabled:cursor-not-allowed"
+          className="w-10 h-10 rounded-lg bg-surface-alt border border-border flex items-center justify-center text-lg font-bold text-text hover:bg-[#2a3a30] hover:border-primary/40 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           +
         </button>

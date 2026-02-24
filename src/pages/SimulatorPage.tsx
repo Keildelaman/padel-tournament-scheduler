@@ -57,7 +57,7 @@ export function SimulatorPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold border-l-4 border-primary pl-3">{t('simulator.title')}</h2>
+      <h2 className="text-2xl font-bold border-l-4 border-accent pl-3">{t('simulator.title')}</h2>
 
       {/* Config Panel */}
       <Card>
@@ -75,7 +75,7 @@ export function SimulatorPage() {
               <button
                 onClick={() => setMode('greedy')}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                  mode === 'greedy' ? 'bg-primary-light text-white shadow-md' : 'text-text-muted hover:text-text'
+                  mode === 'greedy' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-text-muted hover:text-text'
                 }`}
               >
                 {t('simulator.greedy')}
@@ -89,7 +89,7 @@ export function SimulatorPage() {
               <button
                 onClick={() => setMode('montecarlo')}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                  mode === 'montecarlo' ? 'bg-primary-light text-white shadow-md' : 'text-text-muted hover:text-text'
+                  mode === 'montecarlo' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-text-muted hover:text-text'
                 }`}
               >
                 {t('simulator.monteCarlo')}
@@ -124,8 +124,8 @@ export function SimulatorPage() {
               <HeatmapGrid
                 matrix={result.partnerMatrix}
                 labels={result.playerLabels}
-                colorLow="#1e3a5f"
-                colorHigh="#1d4ed8"
+                colorLow="#0d2818"
+                colorHigh="#10b068"
                 title={t('simulator.partnerFrequency')}
               />
             </Card>
@@ -133,8 +133,8 @@ export function SimulatorPage() {
               <HeatmapGrid
                 matrix={result.opponentMatrix}
                 labels={result.playerLabels}
-                colorLow="#3b1c1c"
-                colorHigh="#dc2626"
+                colorLow="#2d1515"
+                colorHigh="#e53935"
                 title={t('simulator.opponentFrequency')}
               />
             </Card>

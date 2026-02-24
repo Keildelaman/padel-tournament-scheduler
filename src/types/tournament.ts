@@ -19,17 +19,21 @@ export interface Round {
   completed: boolean
 }
 
-export type ScoringMode = 'points' | 'winloss'
+export type ScoringMode = 'points' | 'winloss' | 'pointsToWin' | 'timed'
 
 export interface ScoringConfig {
   mode: ScoringMode
   pointsPerMatch: number // total points distributed per match (e.g. 32)
+  targetScore?: number // first team to reach this wins ('pointsToWin' mode)
+  matchDurationMinutes?: number // countdown duration ('timed' mode)
 }
 
 export interface SetupDraft {
   name: string
   scoringMode: ScoringMode
   pointsPerMatch: number
+  targetScore: number
+  matchDurationMinutes: number
   playerNames: string[]
   courts: number
   rounds: number

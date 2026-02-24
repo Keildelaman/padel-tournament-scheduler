@@ -5,8 +5,9 @@ import { CourtCard } from '../components/round/CourtCard'
 import { PauseList } from '../components/round/PauseList'
 import { RoundControls } from '../components/round/RoundControls'
 import { RoundStats } from '../components/round/RoundStats'
+import { RoundTimer } from '../components/round/RoundTimer'
 import { generateAdditionalRoundsMonteCarlo } from '../algorithm'
-import { OPEN_ENDED_EXTEND_THRESHOLD, OPEN_ENDED_BATCH_SIZE, MONTE_CARLO_DEFAULT_ITERATIONS } from '../constants'
+import { OPEN_ENDED_EXTEND_THRESHOLD, OPEN_ENDED_BATCH_SIZE, MONTE_CARLO_DEFAULT_ITERATIONS, DEFAULT_MATCH_DURATION_MINUTES } from '../constants'
 import { useT } from '../i18n'
 import type { Round } from '../types'
 
@@ -68,7 +69,7 @@ export function RoundPage() {
       <div className="text-center py-12 text-text-muted">
         <p>{t('round.noTournament')}</p>
         <button
-          className="mt-3 text-primary hover:underline"
+          className="mt-3 text-accent hover:underline hover:text-accent-light"
           onClick={() => dispatch({ type: 'NAVIGATE_PAGE', payload: { page: 'setup' } })}
         >
           {t('round.goToSetup')}
@@ -131,6 +132,14 @@ export function RoundPage() {
         </div>
       ) : (
         <ProgressBar current={completedRounds} total={tournament.totalRounds} />
+      )}
+
+      {tournament.scoringConfig.mode === 'timed' && (
+        <RoundTimer
+          durationMinutes={tournament.scoringConfig.matchDurationMinutes ?? DEFAULT_MATCH_DURATION_MINUTES}
+          roundNumber={state.viewingRound}
+          disabled={round.completed}
+        />
       )}
 
       <PauseList

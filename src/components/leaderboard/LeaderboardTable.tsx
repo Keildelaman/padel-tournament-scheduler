@@ -24,7 +24,7 @@ export function LeaderboardTable({ entries, tournament }: LeaderboardTableProps)
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-border text-text-muted text-xs uppercase tracking-wide bg-surface-alt/50">
+          <tr className="border-b border-border text-text-muted text-xs uppercase tracking-wide bg-surface-alt/30">
             <th className="text-left py-3 px-2">{t('table.rank')}</th>
             <th className="text-left py-3 px-2">{t('table.player')}</th>
             <th className="text-right py-3 px-2">{t('table.points')}</th>
@@ -41,7 +41,9 @@ export function LeaderboardTable({ entries, tournament }: LeaderboardTableProps)
               <tr
                 key={entry.playerId}
                 onClick={() => setExpandedId(expandedId === entry.playerId ? null : entry.playerId)}
-                className="border-b border-border hover:bg-surface-alt cursor-pointer"
+                className={`border-b border-border hover:bg-primary/5 cursor-pointer ${
+                  entry.rank === 1 ? 'bg-amber-900/[0.06]' : entry.rank === 2 ? 'bg-gray-500/[0.04]' : entry.rank === 3 ? 'bg-orange-900/[0.04]' : ''
+                }`}
               >
                 <td className="py-3 px-2">{rankBadge(entry.rank)}</td>
                 <td className="py-3 px-2 font-medium">{entry.playerName}</td>

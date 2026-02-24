@@ -272,7 +272,7 @@ function totalExtensionCost(
   return cost
 }
 
-function totalScheduleCost(schedule: GeneratedSchedule, playerIds: string[]): number {
+export function totalScheduleCost(schedule: GeneratedSchedule, playerIds: string[]): number {
   let history = createEmptyHistory(playerIds)
   let cost = 0
 

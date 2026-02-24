@@ -16,7 +16,7 @@ export function RoundStats({ tournament }: RoundStatsProps) {
     <div className="border border-border rounded-lg overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full px-4 py-2 flex items-center justify-between text-sm font-medium text-text hover:bg-surface-alt/50"
+        className="w-full px-4 py-2 flex items-center justify-between text-sm font-medium text-text hover:bg-primary/5 transition-colors"
       >
         <span>{t('roundStats.standings')}</span>
         <span className="text-text-muted">{open ? '\u2212' : '+'}</span>

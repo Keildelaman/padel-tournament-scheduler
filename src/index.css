@@ -1,56 +1,72 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand colors */
-  --color-primary: #1e40af;
-  --color-primary-light: #2563eb;
-  --color-primary-surface: #3b82f6;
+  /* Primary: Emerald green — the padel court color */
+  --color-primary: #0d7c4a;
+  --color-primary-light: #10b068;
+  --color-primary-surface: #15c972;
   --color-court-line: #ffffff;
 
-  --color-team-blue: #2563eb;
-  --color-team-blue-light: #60a5fa;
-  --color-team-red: #dc2626;
-  --color-team-red-light: #f87171;
+  /* Accent: Warm gold — tournament prestige */
+  --color-accent: #d4a017;
+  --color-accent-light: #f0c040;
+  --color-accent-muted: #a07d14;
 
-  --color-gold: #f59e0b;
-  --color-silver: #9ca3af;
-  --color-bronze: #b45309;
+  /* Team colors */
+  --color-team-blue: #1a73e8;
+  --color-team-blue-light: #5ba3f5;
+  --color-team-red: #e53935;
+  --color-team-red-light: #ef6f6c;
 
-  /* Dark theme surfaces */
-  --color-surface: #1e293b;
-  --color-surface-alt: #334155;
-  --color-surface-input: #0f172a;
-  --color-border: #475569;
-  --color-border-focus: #60a5fa;
-  --color-text: #e2e8f0;
-  --color-text-muted: #94a3b8;
+  /* Podium metals */
+  --color-gold: #f0c040;
+  --color-silver: #a8b2bd;
+  --color-bronze: #cd7f32;
+
+  /* Dark theme surfaces — near-black with subtle green undertone */
+  --color-surface: #161e1a;
+  --color-surface-alt: #1e2b24;
+  --color-surface-input: #0d1310;
+  --color-border: #2a3a30;
+  --color-border-focus: #10b068;
+  --color-text: #e8ece9;
+  --color-text-muted: #8a9b90;
 
   /* Heatmap scales */
-  --color-heat-partner-low: #1e3a5f;
-  --color-heat-partner-high: #1d4ed8;
-  --color-heat-opponent-low: #3b1c1c;
-  --color-heat-opponent-high: #dc2626;
+  --color-heat-partner-low: #0d2818;
+  --color-heat-partner-high: #10b068;
+  --color-heat-opponent-low: #2d1515;
+  --color-heat-opponent-high: #e53935;
 
   /* Fairness indicator colors */
-  --color-fair-good: #16a34a;
-  --color-fair-warn: #ca8a04;
-  --color-fair-bad: #dc2626;
+  --color-fair-good: #22c55e;
+  --color-fair-warn: #d4a017;
+  --color-fair-bad: #e53935;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   font-family: system-ui, -apple-system, sans-serif;
-  background: radial-gradient(ellipse at 50% 0%, #1e293b 0%, #0f172a 70%) fixed;
-  color: #e2e8f0;
+  background:
+    radial-gradient(ellipse at 30% 0%, rgba(13, 124, 74, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 100%, rgba(212, 160, 23, 0.04) 0%, transparent 50%),
+    linear-gradient(180deg, #0d1310 0%, #0a0f0c 100%);
+  background-attachment: fixed;
+  color: #e8ece9;
 }
 
 ::placeholder {
-  color: #64748b;
+  color: #5a6b60;
   opacity: 1;
 }
 
 ::selection {
-  background: #2563eb;
+  background: #0d7c4a;
   color: #fff;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }

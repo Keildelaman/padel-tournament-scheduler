@@ -1,4 +1,8 @@
-import type { Tournament, PlayerStats, LeaderboardEntry, RoundResult } from '../types'
+import type { Tournament, ScoringMode, PlayerStats, LeaderboardEntry, RoundResult } from '../types'
+
+function usesPointScoring(mode: ScoringMode): boolean {
+  return mode === 'points' || mode === 'pointsToWin' || mode === 'timed'
+}
 
 export function getPlayerStats(tournament: Tournament): PlayerStats[] {
   const statsMap = new Map<string, PlayerStats>()
@@ -46,7 +50,7 @@ export function getPlayerStats(tournament: Tournament): PlayerStats[] {
           opponentIds,
         }
 
-        if (tournament.scoringConfig.mode === 'points') {
+        if (usesPointScoring(tournament.scoringConfig.mode)) {
           if (match.score1 != null && match.score2 != null) {
             const myScore = isTeam1 ? match.score1 : match.score2
             const theirScore = isTeam1 ? match.score2 : match.score1
@@ -104,7 +108,7 @@ export function isRoundComplete(tournament: Tournament, roundNumber: number): bo
   const round = tournament.rounds.find(r => r.roundNumber === roundNumber)
   if (!round) return false
 
-  if (tournament.scoringConfig.mode === 'points') {
+  if (usesPointScoring(tournament.scoringConfig.mode)) {
     return round.matches.every(m => m.score1 != null && m.score2 != null)
   }
   return round.matches.every(m => m.winner != null)

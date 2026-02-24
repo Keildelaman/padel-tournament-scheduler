@@ -27,8 +27,8 @@ export function Modal({ open, onClose, title, children, confirmText, confirmVari
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="fixed inset-0 bg-black/70" onClick={onClose} />
-      <div className="relative bg-surface rounded-xl border border-border shadow-2xl max-w-md w-full p-6">
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-surface/95 backdrop-blur-xl rounded-2xl border border-border/60 shadow-2xl shadow-black/50 ring-1 ring-white/[0.05] max-w-md w-full p-6">
         <h3 className="text-lg font-semibold mb-3">{title}</h3>
         <div className="mb-6 text-text-muted">{children}</div>
         <div className="flex justify-end gap-3">

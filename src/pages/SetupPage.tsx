@@ -5,11 +5,12 @@ import { FairnessCards } from '../components/simulator/FairnessCards'
 import { HeatmapGrid } from '../components/simulator/HeatmapGrid'
 import {
   MIN_PLAYERS, MAX_PLAYERS, MIN_COURTS, MAX_COURTS, MIN_ROUNDS, MAX_ROUNDS,
-  DEFAULT_POINTS_PER_MATCH, DEFAULT_TOURNAMENT_NAME, PLAYERS_PER_COURT,
+  DEFAULT_POINTS_PER_MATCH, DEFAULT_TARGET_SCORE, DEFAULT_MATCH_DURATION_MINUTES,
+  DEFAULT_TOURNAMENT_NAME, PLAYERS_PER_COURT,
   MONTE_CARLO_DEFAULT_ITERATIONS,
 } from '../constants'
 import { validatePlayerNames, suggestRoundCount, effectiveCourts } from '../utils/validation'
-import { generateScheduleMonteCarlo, computeFairnessMetrics } from '../algorithm'
+import { generateScheduleMonteCarlo, computeFairnessMetrics, totalScheduleCost } from '../algorithm'
 import { buildMatrices } from '../algorithm/metrics'
 import { generateId } from '../utils/ids'
 import { useT } from '../i18n'
@@ -31,6 +32,7 @@ interface SchedulePreviewData {
   playerLabels: string[]
   players: Player[]
   generationInfo?: GenerationInfo
+  cost: number
 }
 
 export function SetupPage() {
@@ -41,6 +43,8 @@ export function SetupPage() {
   const [name, setName] = useState(draft?.name ?? DEFAULT_TOURNAMENT_NAME)
   const [scoringMode, setScoringMode] = useState<ScoringMode>(draft?.scoringMode ?? 'points')
   const [pointsPerMatch, setPointsPerMatch] = useState(draft?.pointsPerMatch ?? DEFAULT_POINTS_PER_MATCH)
+  const [targetScore, setTargetScore] = useState(draft?.targetScore ?? DEFAULT_TARGET_SCORE)
+  const [matchDurationMinutes, setMatchDurationMinutes] = useState(draft?.matchDurationMinutes ?? DEFAULT_MATCH_DURATION_MINUTES)
   const [playerNames, setPlayerNames] = useState<string[]>(
     ensureTrailingEmpty(draft?.playerNames ?? ['', '', '', ''])
   )
@@ -51,15 +55,18 @@ export function SetupPage() {
   const [error, setError] = useState<string | null>(null)
   const [preview, setPreview] = useState<SchedulePreviewData | null>(null)
   const [generating, setGenerating] = useState(false)
+  const [mcIterations, setMcIterations] = useState(MONTE_CARLO_DEFAULT_ITERATIONS)
+  const [keepBest, setKeepBest] = useState(true)
+  const [keptMessage, setKeptMessage] = useState(false)
   const [editingName, setEditingName] = useState(false)
   const nameInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     dispatch({
       type: 'SAVE_SETUP_DRAFT',
-      payload: { name, scoringMode, pointsPerMatch, playerNames, courts, rounds, openEnded, courtNames },
+      payload: { name, scoringMode, pointsPerMatch, targetScore, matchDurationMinutes, playerNames, courts, rounds, openEnded, courtNames },
     })
-  }, [name, scoringMode, pointsPerMatch, playerNames, courts, rounds, openEnded, courtNames, dispatch])
+  }, [name, scoringMode, pointsPerMatch, targetScore, matchDurationMinutes, playerNames, courts, rounds, openEnded, courtNames, dispatch])
 
   const playerRefs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -94,12 +101,13 @@ export function SetupPage() {
     }
   }
 
-  const generatePreview = useCallback((players: Player[], numCourts: number, numRounds: number): SchedulePreviewData => {
+  const generatePreview = useCallback((players: Player[], numCourts: number, numRounds: number, iterations: number): SchedulePreviewData => {
     const playerIds = players.map(p => p.id)
     const config = { playerIds, courts: numCourts, totalRounds: numRounds }
-    const schedule = generateScheduleMonteCarlo(config, MONTE_CARLO_DEFAULT_ITERATIONS)
+    const schedule = generateScheduleMonteCarlo(config, iterations)
     const metrics = computeFairnessMetrics(schedule, playerIds)
     const { partnerMatrix, opponentMatrix } = buildMatrices(schedule, playerIds)
+    const cost = totalScheduleCost(schedule, playerIds)
 
     const builtRounds: Round[] = schedule.rounds.map(gr => ({
       roundNumber: gr.roundNumber,
@@ -121,6 +129,7 @@ export function SetupPage() {
       playerLabels: players.map(p => p.name),
       players,
       generationInfo: schedule.info,
+      cost,
     }
   }, [])
 
@@ -135,7 +144,7 @@ export function SetupPage() {
     const effectiveRounds = openEnded ? 30 : rounds
     setGenerating(true)
     setTimeout(() => {
-      setPreview(generatePreview(players, eCourts, effectiveRounds))
+      setPreview(generatePreview(players, eCourts, effectiveRounds, mcIterations))
       setGenerating(false)
     }, 10)
   }
@@ -144,8 +153,14 @@ export function SetupPage() {
     if (!preview) return
     const effectiveRounds = openEnded ? 30 : rounds
     setGenerating(true)
+    setKeptMessage(false)
     setTimeout(() => {
-      setPreview(generatePreview(preview.players, eCourts, effectiveRounds))
+      const candidate = generatePreview(preview.players, eCourts, effectiveRounds, mcIterations)
+      if (!keepBest || candidate.cost < preview.cost) {
+        setPreview(candidate)
+      } else {
+        setKeptMessage(true)
+      }
       setGenerating(false)
     }, 10)
   }
@@ -161,7 +176,12 @@ export function SetupPage() {
         players: preview.players,
         courts: eCourts,
         totalRounds: rounds,
-        scoringConfig: { mode: scoringMode, pointsPerMatch },
+        scoringConfig: {
+          mode: scoringMode,
+          pointsPerMatch,
+          targetScore: scoringMode === 'pointsToWin' ? targetScore : undefined,
+          matchDurationMinutes: scoringMode === 'timed' ? matchDurationMinutes : undefined,
+        },
         rounds: preview.rounds,
         openEnded,
         courtNames: hasCustomNames ? finalCourtNames.map((n, i) => n.trim() || t('setup.courtPlaceholder', { n: i + 1 })) : undefined,
@@ -196,7 +216,7 @@ export function SetupPage() {
   if (preview) {
     return (
       <div className="max-w-5xl mx-auto space-y-6">
-        <h2 className="text-2xl font-bold border-l-4 border-primary pl-3">{t('preview.title')}</h2>
+        <h2 className="text-2xl font-bold border-l-4 border-accent pl-3">{t('preview.title')}</h2>
 
         {openEnded && (
           <p className="text-sm text-text-muted italic">{t('preview.openEndedHint')}</p>
@@ -208,13 +228,33 @@ export function SetupPage() {
           <GenerationInfoBar info={preview.generationInfo} />
         )}
 
+        <div className="flex flex-wrap items-center gap-4 text-sm">
+          <label className="flex items-center gap-2 text-text-muted">
+            {t('preview.iterations')}
+            <input type="range" min={50} max={2000} step={50}
+              value={mcIterations} onChange={e => setMcIterations(Number(e.target.value))}
+              className="w-32 accent-primary" />
+            <span className="text-text font-mono w-12 text-right">{mcIterations}</span>
+          </label>
+          <label className="flex items-center gap-2 text-text-muted cursor-pointer">
+            <input type="checkbox" checked={keepBest}
+              onChange={e => { setKeepBest(e.target.checked); setKeptMessage(false) }}
+              className="accent-primary" />
+            {t('preview.keepBest')}
+          </label>
+        </div>
+
+        {keptMessage && (
+          <p className="text-xs text-text-muted italic">{t('preview.keptBetter')}</p>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
             <HeatmapGrid
               matrix={preview.partnerMatrix}
               labels={preview.playerLabels}
-              colorLow="#1e3a5f"
-              colorHigh="#1d4ed8"
+              colorLow="#0d2818"
+              colorHigh="#10b068"
               title={t('preview.partnerFrequency')}
             />
           </Card>
@@ -222,8 +262,8 @@ export function SetupPage() {
             <HeatmapGrid
               matrix={preview.opponentMatrix}
               labels={preview.playerLabels}
-              colorLow="#3b1c1c"
-              colorHigh="#dc2626"
+              colorLow="#2d1515"
+              colorHigh="#e53935"
               title={t('preview.opponentFrequency')}
             />
           </Card>
@@ -250,7 +290,7 @@ export function SetupPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Inline-editable tournament title */}
-      <div className="flex items-center gap-2 border-l-4 border-primary pl-3">
+      <div className="flex items-center gap-2 border-l-4 border-accent pl-3">
         {editingName ? (
           <input
             ref={nameInputRef}
@@ -289,28 +329,27 @@ export function SetupPage() {
       {/* Scoring Mode */}
       <Card>
         <label className="block text-sm font-semibold text-text mb-2">{t('setup.scoringMode')}</label>
-        <div className="flex gap-1 bg-surface-input rounded-lg p-1">
-          <button
-            onClick={() => setScoringMode('points')}
-            className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
-              scoringMode === 'points'
-                ? 'bg-primary-light text-white shadow-md'
-                : 'text-text-muted hover:text-text'
-            }`}
-          >
-            {t('setup.scoringPoints')}
-          </button>
-          <button
-            onClick={() => setScoringMode('winloss')}
-            className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
-              scoringMode === 'winloss'
-                ? 'bg-primary-light text-white shadow-md'
-                : 'text-text-muted hover:text-text'
-            }`}
-          >
-            {t('setup.scoringWinLoss')}
-          </button>
+        <div className="grid grid-cols-2 gap-1 bg-surface-input rounded-lg p-1">
+          {([
+            ['points', t('setup.scoringPoints')],
+            ['pointsToWin', t('setup.scoringPointsToWin')],
+            ['timed', t('setup.scoringTimed')],
+            ['winloss', t('setup.scoringWinLoss')],
+          ] as const).map(([mode, label]) => (
+            <button
+              key={mode}
+              onClick={() => setScoringMode(mode)}
+              className={`py-2 px-3 rounded-md text-sm font-medium transition-all ${
+                scoringMode === mode
+                  ? 'bg-primary text-white shadow-md shadow-primary/20'
+                  : 'text-text-muted hover:text-text'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
+        <p className="text-xs text-text-muted mt-2">{t(`setup.scoringDesc.${scoringMode}`)}</p>
         {scoringMode === 'points' && (
           <div className="mt-3 flex flex-col items-center">
             <NumberInput
@@ -321,6 +360,30 @@ export function SetupPage() {
               max={100}
             />
             <p className="text-xs text-text-muted mt-1">{t('setup.pointsPerMatchHint')}</p>
+          </div>
+        )}
+        {scoringMode === 'pointsToWin' && (
+          <div className="mt-3 flex flex-col items-center">
+            <NumberInput
+              label={t('setup.targetScore')}
+              value={targetScore}
+              onChange={setTargetScore}
+              min={1}
+              max={99}
+            />
+            <p className="text-xs text-text-muted mt-1">{t('setup.targetScoreHint')}</p>
+          </div>
+        )}
+        {scoringMode === 'timed' && (
+          <div className="mt-3 flex flex-col items-center">
+            <NumberInput
+              label={t('setup.matchDuration')}
+              value={matchDurationMinutes}
+              onChange={setMatchDurationMinutes}
+              min={1}
+              max={60}
+            />
+            <p className="text-xs text-text-muted mt-1">{t('setup.matchDurationHint')}</p>
           </div>
         )}
       </Card>
@@ -376,7 +439,7 @@ export function SetupPage() {
                 onClick={() => setOpenEnded(false)}
                 className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
                   !openEnded
-                    ? 'bg-primary-light text-white shadow-md'
+                    ? 'bg-primary text-white shadow-md shadow-primary/20'
                     : 'text-text-muted hover:text-text'
                 }`}
               >
@@ -386,7 +449,7 @@ export function SetupPage() {
                 onClick={() => setOpenEnded(true)}
                 className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
                   openEnded
-                    ? 'bg-primary-light text-white shadow-md'
+                    ? 'bg-primary text-white shadow-md shadow-primary/20'
                     : 'text-text-muted hover:text-text'
                 }`}
               >
@@ -406,7 +469,7 @@ export function SetupPage() {
                 {validNames.length >= MIN_PLAYERS && (
                   <div className="mt-2 flex items-center gap-1 text-xs text-text-muted">
                     <button
-                      className="text-primary hover:underline"
+                      className="text-accent hover:underline hover:text-accent-light"
                       onClick={() => setRounds(suggested)}
                     >
                       {t('setup.suggested', { n: suggested })}

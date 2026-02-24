@@ -14,7 +14,7 @@ export function HeatmapGrid({ matrix, labels, colorLow, colorHigh, title }: Heat
   const maxVal = Math.max(1, ...matrix.flat())
 
   const cellColor = (val: number): string => {
-    if (val === 0) return '#1e293b'
+    if (val === 0) return '#161e1a'
     const t = val / maxVal
     return interpolateColor(colorLow, colorHigh, t)
   }
@@ -51,8 +51,8 @@ export function HeatmapGrid({ matrix, labels, colorLow, colorHigh, title }: Heat
                     key={`c-${i}-${j}`}
                     className="rounded-sm flex items-center justify-center text-[10px] font-medium cursor-default relative"
                     style={{
-                      backgroundColor: i === j ? '#334155' : cellColor(val),
-                      color: val > maxVal * 0.6 ? 'white' : '#e2e8f0',
+                      backgroundColor: i === j ? '#1e2b24' : cellColor(val),
+                      color: val > maxVal * 0.6 ? 'white' : '#e8ece9',
                       minWidth: 28,
                       minHeight: 28,
                     }}

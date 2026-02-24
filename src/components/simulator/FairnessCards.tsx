@@ -67,9 +67,9 @@ export function FairnessCards({ metrics }: FairnessCardsProps) {
   ]
 
   const colorMap = {
-    good: 'text-fair-good border-fair-good/40 bg-green-900/30',
-    warn: 'text-fair-warn border-fair-warn/40 bg-yellow-900/30',
-    bad: 'text-fair-bad border-fair-bad/40 bg-red-900/30',
+    good: 'text-fair-good border-fair-good/40 bg-emerald-950/40',
+    warn: 'text-fair-warn border-fair-warn/40 bg-amber-950/40',
+    bad: 'text-fair-bad border-fair-bad/40 bg-red-950/40',
   }
 
   return (

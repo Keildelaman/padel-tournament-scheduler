@@ -15,7 +15,24 @@
       "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && git add src/components/round/CourtCard.tsx src/vite-env.d.ts && git add -u && git commit -m \"$\\(cat <<'EOF'\nInitial commit: Padel tournament scheduler\n\nReact + TypeScript + Vite app for managing padel tournaments with\nautomatic court assignment, fair partner/opponent rotation, scoring,\nleaderboard tracking, and a schedule simulator with Monte Carlo mode.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\" 2>&1)",
       "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && git add vite.config.ts .github/workflows/deploy.yml && git commit -m \"$\\(cat <<'EOF'\nAdd GitHub Pages deployment workflow\n\nSet Vite base path for GitHub Pages and add Actions workflow\nto build and deploy on push to main.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\" 2>&1)",
       "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && git push 2>&1)",
-      "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && rm -rf .github && git add -A && git commit -m \"$\\(cat <<'EOF'\nRemove GitHub Pages setup, prepare for Cloudflare Pages\n\nRevert Vite base path to root and remove Actions workflow.\nCloudflare Pages handles builds natively via dashboard config.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git push 2>&1)"
+      "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && rm -rf .github && git add -A && git commit -m \"$\\(cat <<'EOF'\nRemove GitHub Pages setup, prepare for Cloudflare Pages\n\nRevert Vite base path to root and remove Actions workflow.\nCloudflare Pages handles builds natively via dashboard config.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git push 2>&1)",
+      "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && gh repo rename oida-padel --yes 2>&1)",
+      "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && git add package.json index.html src/components/layout/Header.tsx README.md && git commit -m \"$\\(cat <<'EOF'\nRebrand to OidaPadel\n\nUpdate app name, page title, header fallback, README, and\nrename GitHub repo to oida-padel.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git push 2>&1)",
+      "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && git add public/favicon.svg index.html && git commit -m \"$\\(cat <<'EOF'\nAdd favicon and fix tab name to \"Oida Padel\"\n\nSVG favicon with padel ball design and \"OP\" initials.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git push 2>&1)",
+      "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && git add src/components/round/CourtCard.tsx src/components/layout/Header.tsx src/components/round/RoundStats.tsx && git commit -m \"$\\(cat <<'EOF'\nCompact court cards, hide leaderboard during play, show full standings\n\n- Court cards: remove white card wrapper, render court label inside SVG,\n  spread player names vertically, remove total footer, add score hover effect,\n  show full names without truncation\n- Hide Leaderboard tab until tournament is finished \\(phase === 'finished'\\);\n  inline Standings widget in Rounds view serves as mid-tournament standings\n- Standings widget now shows all players instead of only top 5\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git push 2>&1)",
+      "Bash(head:*)",
+      "Bash(cd \"C:\\\\Users\\\\Manuel\\\\Dev\\\\VSCode_Projects\\\\Claude_Projects\\\\padel_tournament_scheduler\" && npx tsx scripts/test-fairness.ts 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\Manuel\\\\Dev\\\\VSCode_Projects\\\\Claude_Projects\\\\padel_tournament_scheduler\" && npx tsc -b --noEmit 2>&1)",
+      "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && npx tsc -b --noEmit 2>&1)",
+      "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && npx tsx scripts/test-fairness.ts 2>&1)",
+      "Bash(tail:*)",
+      "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && npx tsc --noEmit 2>&1)",
+      "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && git add src/utils/validation.ts src/i18n/en.ts src/i18n/de.ts && git commit -m \"$\\(cat <<'EOF'\nFix suggested round count formula \\(was off by 2x\\)\n\nThe denominator used players-per-round instead of partnerships-per-round,\nproducing suggestions that were half of the correct minimum. E.g. 4 players\n/ 1 court now correctly suggests 3 rounds instead of 2.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git push 2>&1)",
+      "WebFetch(domain:www.padelamericano.org)",
+      "WebFetch(domain:padelamericano.org)"
     ]
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true
   }
 }

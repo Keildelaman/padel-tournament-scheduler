@@ -3,7 +3,18 @@ import { Card, Button } from '../components/shared'
 import { PodiumGraphic } from '../components/leaderboard/PodiumGraphic'
 import { LeaderboardTable } from '../components/leaderboard/LeaderboardTable'
 import { leaderboardToCsv, leaderboardToText, downloadFile } from '../utils/export'
+import { DEFAULT_TARGET_SCORE, DEFAULT_MATCH_DURATION_MINUTES } from '../constants'
 import { useT } from '../i18n'
+import type { ScoringConfig } from '../types'
+
+function scoringLabel(config: ScoringConfig, t: (key: string, params?: Record<string, string | number>) => string): string {
+  switch (config.mode) {
+    case 'points': return t('leaderboard.pts', { n: config.pointsPerMatch })
+    case 'pointsToWin': return t('leaderboard.ptsToWin', { n: config.targetScore ?? DEFAULT_TARGET_SCORE })
+    case 'timed': return t('leaderboard.timed', { n: config.matchDurationMinutes ?? DEFAULT_MATCH_DURATION_MINUTES })
+    case 'winloss': return t('leaderboard.wl')
+  }
+}
 
 export function LeaderboardPage() {
   const { state, dispatch } = useTournament()
@@ -15,7 +26,7 @@ export function LeaderboardPage() {
       <div className="text-center py-12 text-text-muted">
         <p>{t('leaderboard.noData')}</p>
         <button
-          className="mt-3 text-primary hover:underline"
+          className="mt-3 text-accent hover:underline hover:text-accent-light"
           onClick={() => dispatch({ type: 'NAVIGATE_PAGE', payload: { page: 'setup' } })}
         >
           {t('leaderboard.goToSetup')}
@@ -31,7 +42,7 @@ export function LeaderboardPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold border-l-4 border-primary pl-3">
+        <h2 className="text-2xl font-bold border-l-4 border-accent pl-3">
           {tournament.phase === 'finished' ? t('leaderboard.finalResults') : t('leaderboard.currentStandings')}
         </h2>
         <div className="flex gap-2">
@@ -72,7 +83,7 @@ export function LeaderboardPage() {
           </div>
           <div>
             <div className="text-2xl font-bold text-primary-surface">
-              {tournament.scoringConfig.mode === 'points' ? t('leaderboard.pts', { n: tournament.scoringConfig.pointsPerMatch }) : t('leaderboard.wl')}
+              {scoringLabel(tournament.scoringConfig, t)}
             </div>
             <div className="text-xs text-text-muted">{t('leaderboard.scoring')}</div>
           </div>
