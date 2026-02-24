@@ -25,10 +25,10 @@ export function HeatmapGrid({ matrix, labels, colorLow, colorHigh, title }: Heat
       <h4 className="text-sm font-semibold text-text mb-2">{title}</h4>
       <div>
         <div
-          className="inline-grid gap-px"
+          className="grid gap-px"
           style={{
-            gridTemplateColumns: `auto repeat(${n}, minmax(28px, 1fr))`,
-            gridTemplateRows: `auto repeat(${n}, minmax(28px, 1fr))`,
+            gridTemplateColumns: `auto repeat(${n}, minmax(0, 1fr))`,
+            gridTemplateRows: `auto repeat(${n}, minmax(0, 1fr))`,
           }}
         >
           {/* Empty corner */}
@@ -54,8 +54,7 @@ export function HeatmapGrid({ matrix, labels, colorLow, colorHigh, title }: Heat
                     style={{
                       backgroundColor: i === j ? '#1e2b24' : cellColor(val),
                       color: val > maxVal * 0.6 ? 'white' : '#e8ece9',
-                      minWidth: 28,
-                      minHeight: 28,
+                      aspectRatio: '1',
                     }}
                     onMouseEnter={(e) => {
                       if (i !== j) {

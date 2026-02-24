@@ -268,9 +268,7 @@ export function SetupPage() {
           </label>
         </div>
 
-        {keptMessage && (
-          <p className="text-xs text-text-muted italic">{t('preview.keptBetter')}</p>
-        )}
+        <p className={`text-xs text-text-muted italic ${keptMessage ? '' : 'invisible'}`}>{t('preview.keptBetter')}</p>
 
         <div className="flex justify-between gap-3">
           <Button variant="secondary" onClick={() => setPreview(null)} disabled={generating}>
