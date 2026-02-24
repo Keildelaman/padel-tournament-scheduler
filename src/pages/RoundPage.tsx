@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { useTournament, isRoundComplete } from '../state'
+import { useTournament, usePlayerGroup, isRoundComplete, getLeaderboard, buildTournamentRecord } from '../state'
 import { ProgressBar, Modal } from '../components/shared'
 import { CourtCard } from '../components/round/CourtCard'
 import { PauseList } from '../components/round/PauseList'
@@ -13,8 +13,10 @@ import type { Round } from '../types'
 
 export function RoundPage() {
   const { state, dispatch } = useTournament()
+  const { pgState, pgDispatch } = usePlayerGroup()
   const { t } = useT()
   const [showFinishModal, setShowFinishModal] = useState(false)
+  const [excludeFromRegistry, setExcludeFromRegistry] = useState(false)
   const [extending, setExtending] = useState(false)
   const extendingRef = useRef(false)
   const tournament = state.tournament
@@ -120,6 +122,13 @@ export function RoundPage() {
     if (roundComplete && !round.completed) {
       dispatch({ type: 'COMPLETE_ROUND', payload: { roundNumber: state.viewingRound } })
     }
+    // Record to player group before finishing
+    if (pgState.index.activeGroupId && tournament) {
+      const leaderboard = getLeaderboard(tournament)
+      const record = buildTournamentRecord(tournament, leaderboard)
+      record.excluded = excludeFromRegistry
+      pgDispatch({ type: 'PG_ADD_TOURNAMENT_RECORD', payload: { record } })
+    }
     dispatch({ type: 'FINISH_TOURNAMENT' })
     setShowFinishModal(false)
   }
@@ -192,6 +201,20 @@ export function RoundPage() {
         onConfirm={handleFinish}
       >
         <p>{t('round.finishMessage')}</p>
+        {pgState.index.activeGroupId && (
+          <>
+            <label className="flex items-center gap-2 mt-4 text-sm text-text cursor-pointer">
+              <input
+                type="checkbox"
+                checked={excludeFromRegistry}
+                onChange={e => setExcludeFromRegistry(e.target.checked)}
+                className="accent-primary"
+              />
+              {t('round.excludeFromRegistry')}
+            </label>
+            <p className="text-xs text-text-muted mt-1">{t('round.excludeHint')}</p>
+          </>
+        )}
       </Modal>
     </div>
   )

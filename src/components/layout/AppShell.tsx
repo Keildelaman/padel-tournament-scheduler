@@ -4,6 +4,9 @@ import { SetupPage } from '../../pages/SetupPage'
 import { RoundPage } from '../../pages/RoundPage'
 import { LeaderboardPage } from '../../pages/LeaderboardPage'
 import { SimulatorPage } from '../../pages/SimulatorPage'
+import { PlayersPage } from '../../pages/PlayersPage'
+import { PlayerDetailPage } from '../../pages/PlayerDetailPage'
+import { PlayerGroupsPage } from '../../pages/PlayerGroupsPage'
 
 export function AppShell() {
   const { state } = useTournament()
@@ -13,6 +16,9 @@ export function AppShell() {
       case 'setup': return <SetupPage />
       case 'round': return <RoundPage />
       case 'leaderboard': return <LeaderboardPage />
+      case 'players': return <PlayersPage />
+      case 'playerDetail': return <PlayerDetailPage />
+      case 'playerGroups': return <PlayerGroupsPage />
       case 'simulator': return <SimulatorPage />
     }
   }

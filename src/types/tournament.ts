@@ -39,6 +39,7 @@ export interface SetupDraft {
   rounds: number
   openEnded: boolean
   courtNames?: string[]
+  linkedPlayerIds?: (string | null)[]
 }
 
 export type TournamentPhase = 'setup' | 'playing' | 'finished'

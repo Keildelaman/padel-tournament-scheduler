@@ -7,6 +7,7 @@ export const initialState: TournamentState = {
   currentPage: 'setup',
   viewingRound: 1,
   setupDraft: null,
+  viewingPlayerId: null,
 }
 
 export function tournamentReducer(state: TournamentState, action: TournamentAction): TournamentState {
@@ -140,6 +141,10 @@ export function tournamentReducer(state: TournamentState, action: TournamentActi
 
     case 'SAVE_SETUP_DRAFT': {
       return { ...state, setupDraft: action.payload }
+    }
+
+    case 'VIEW_PLAYER_DETAIL': {
+      return { ...state, currentPage: 'playerDetail', viewingPlayerId: action.payload.playerId }
     }
 
     default:

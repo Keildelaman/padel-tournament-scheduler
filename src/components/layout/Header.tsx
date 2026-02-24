@@ -7,6 +7,8 @@ const navItems: { page: Page; labelKey: string; requiresTournament: boolean }[] 
   { page: 'setup', labelKey: 'nav.setup', requiresTournament: false },
   { page: 'round', labelKey: 'nav.rounds', requiresTournament: true },
   { page: 'leaderboard', labelKey: 'nav.leaderboard', requiresTournament: true },
+  { page: 'players', labelKey: 'nav.players', requiresTournament: false },
+  { page: 'playerGroups', labelKey: 'nav.playerGroups', requiresTournament: false },
   { page: 'simulator', labelKey: 'nav.simulator', requiresTournament: false },
 ]
 
@@ -30,7 +32,8 @@ export function Header() {
               {navItems.map(item => {
                 if (item.requiresTournament && !hasTournament) return null
                 if (item.page === 'leaderboard' && state.tournament?.phase !== 'finished') return null
-                const isActive = state.currentPage === item.page
+                if (item.page === 'playerDetail') return null
+                const isActive = state.currentPage === item.page || (item.page === 'players' && state.currentPage === 'playerDetail')
                 return (
                   <button
                     key={item.page}

@@ -31,7 +31,8 @@
       "WebFetch(domain:www.padelamericano.org)",
       "WebFetch(domain:padelamericano.org)",
       "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && npx vite build 2>&1)",
-      "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && npx tsc --noEmit 2>&1 && npx vite build 2>&1)"
+      "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && npx tsc --noEmit 2>&1 && npx vite build 2>&1)",
+      "Bash(cd /c/Users/Manuel/Dev/VSCode_Projects/Claude_Projects/padel_tournament_scheduler && git add src/components/simulator/HeatmapGrid.tsx src/pages/SetupPage.tsx && git commit -m \"$\\(cat <<'EOF'\nFix heatmap grid overflow and stabilize kept-message layout\n\n- Switch from inline-grid to grid so the matrix respects Card width\n- Use minmax\\(0, 1fr\\) and aspect-ratio instead of fixed minimums so cells\n  shrink to fit with many players\n- Reserve space for the \"kept better\" message to prevent button jumping\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git push 2>&1)"
     ]
   },
   "enabledPlugins": {

@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
-import { useTournament } from '../state'
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
+import { useTournament, usePlayerGroup, getNonArchivedPlayers, getRegisteredPlayerByName } from '../state'
 import { Card, Button, NumberInput, GenerationInfoBar } from '../components/shared'
 import { FairnessCards } from '../components/simulator/FairnessCards'
 import { HeatmapGrid } from '../components/simulator/HeatmapGrid'
+import { PlayerAutocomplete } from '../components/setup/PlayerAutocomplete'
 import {
   MIN_PLAYERS, MAX_PLAYERS, MIN_COURTS, MAX_COURTS, MIN_ROUNDS, MAX_ROUNDS,
   DEFAULT_POINTS_PER_MATCH, DEFAULT_TARGET_SCORE, DEFAULT_MATCH_DURATION_MINUTES,
@@ -37,6 +38,7 @@ interface SchedulePreviewData {
 
 export function SetupPage() {
   const { state, dispatch } = useTournament()
+  const { pgDispatch, activeGroup } = usePlayerGroup()
   const { t } = useT()
 
   const draft = state.setupDraft
@@ -50,6 +52,8 @@ export function SetupPage() {
   const [playerNames, setPlayerNames] = useState<string[]>(
     ensureTrailingEmpty(draftHasNames ? draft.playerNames : defaultPlayerNames)
   )
+  const [linkedPlayerIds, setLinkedPlayerIds] = useState<(string | null)[]>(draft?.linkedPlayerIds ?? [])
+  const [showArchivedInAutocomplete, setShowArchivedInAutocomplete] = useState(false)
   const [courts, setCourts] = useState(draft?.courts ?? 1)
   const [rounds, setRounds] = useState(draft?.rounds ?? 6)
   const [openEnded, setOpenEnded] = useState(draft?.openEnded ?? false)
@@ -64,12 +68,26 @@ export function SetupPage() {
   const [showCourtNames, setShowCourtNames] = useState(false)
   const nameInputRef = useRef<HTMLInputElement>(null)
 
+  const registeredPlayers = useMemo(() => {
+    if (!activeGroup) return []
+    if (showArchivedInAutocomplete) return activeGroup.players
+    return getNonArchivedPlayers(activeGroup)
+  }, [activeGroup, showArchivedInAutocomplete])
+
+  const selectedPlayerIds = useMemo(() => {
+    const ids = new Set<string>()
+    for (const id of linkedPlayerIds) {
+      if (id) ids.add(id)
+    }
+    return ids
+  }, [linkedPlayerIds])
+
   useEffect(() => {
     dispatch({
       type: 'SAVE_SETUP_DRAFT',
-      payload: { name, scoringMode, pointsPerMatch, targetScore, matchDurationMinutes, playerNames, courts, rounds, openEnded, courtNames },
+      payload: { name, scoringMode, pointsPerMatch, targetScore, matchDurationMinutes, playerNames, courts, rounds, openEnded, courtNames, linkedPlayerIds },
     })
-  }, [name, scoringMode, pointsPerMatch, targetScore, matchDurationMinutes, playerNames, courts, rounds, openEnded, courtNames, dispatch])
+  }, [name, scoringMode, pointsPerMatch, targetScore, matchDurationMinutes, playerNames, courts, rounds, openEnded, courtNames, linkedPlayerIds, dispatch])
 
   const playerRefs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -80,19 +98,42 @@ export function SetupPage() {
 
   const removePlayer = (index: number) => {
     const updated = playerNames.filter((_, i) => i !== index)
+    const updatedIds = linkedPlayerIds.filter((_, i) => i !== index)
     setPlayerNames(ensureTrailingEmpty(updated))
+    setLinkedPlayerIds(updatedIds)
   }
 
   const updatePlayer = (index: number, value: string) => {
     const updated = [...playerNames]
     updated[index] = value
+    // Clear linked ID when user manually types
+    const updatedIds = [...linkedPlayerIds]
+    updatedIds[index] = null
     if (index === updated.length - 1 && value.trim().length > 0) {
       const filledCount = updated.filter(n => n.trim().length > 0).length
       if (filledCount < MAX_PLAYERS) {
         updated.push('')
+        updatedIds.push(null)
       }
     }
     setPlayerNames(updated)
+    setLinkedPlayerIds(updatedIds)
+  }
+
+  const handleAutocompleteSelect = (index: number, player: import('../types').RegisteredPlayer) => {
+    const updated = [...playerNames]
+    updated[index] = player.name
+    const updatedIds = [...linkedPlayerIds]
+    updatedIds[index] = player.id
+    if (index === updated.length - 1) {
+      const filledCount = updated.filter(n => n.trim().length > 0).length
+      if (filledCount < MAX_PLAYERS) {
+        updated.push('')
+        updatedIds.push(null)
+      }
+    }
+    setPlayerNames(updated)
+    setLinkedPlayerIds(updatedIds)
   }
 
   const handlePlayerKeyDown = (index: number, e: React.KeyboardEvent) => {
@@ -143,7 +184,18 @@ export function SetupPage() {
     if (eCourts < 1) { setError(t('setup.notEnoughPlayers')); return }
     setError(null)
 
-    const players: Player[] = names.map(n => ({ id: generateId(), name: n }))
+    // Build players with linked IDs where available
+    const filledIndices = playerNames.map((n, i) => ({ name: n.trim(), i })).filter(x => x.name.length > 0)
+    const players: Player[] = filledIndices.map(({ name, i }) => {
+      // Auto-link by name if typed manually but matches a registered player
+      let id = linkedPlayerIds[i] ?? null
+      if (!id && activeGroup) {
+        const match = getRegisteredPlayerByName(activeGroup, name)
+        if (match) id = match.id
+      }
+      return { id: id ?? generateId(), name }
+    })
+
     const effectiveRounds = openEnded ? 30 : rounds
     setGenerating(true)
     setTimeout(() => {
@@ -172,6 +224,23 @@ export function SetupPage() {
     if (!preview) return
     const finalCourtNames = courtNames.slice(0, eCourts)
     const hasCustomNames = finalCourtNames.some(n => n.trim().length > 0)
+
+    // Register any new players to active group
+    if (activeGroup) {
+      const existingNames = new Set(activeGroup.players.map(p => p.name.toLowerCase()))
+      const newNames: string[] = []
+      const newIds: string[] = []
+      for (const player of preview.players) {
+        if (!existingNames.has(player.name.toLowerCase())) {
+          newNames.push(player.name)
+          newIds.push(player.id)
+        }
+      }
+      if (newNames.length > 0) {
+        pgDispatch({ type: 'PG_REGISTER_PLAYERS_BATCH', payload: { names: newNames, ids: newIds } })
+      }
+    }
+
     dispatch({
       type: 'START_TOURNAMENT',
       payload: {
@@ -329,9 +398,22 @@ export function SetupPage() {
 
       {/* Players */}
       <Card>
-        <label className="text-lg font-bold text-text mb-3 block">
-          {t('setup.players', { count: validNames.length })}
-        </label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="text-lg font-bold text-text">
+            {t('setup.players', { count: validNames.length })}
+          </label>
+          {registeredPlayers.length > 0 && (
+            <label className="flex items-center gap-1.5 text-xs text-text-muted cursor-pointer">
+              <input
+                type="checkbox"
+                checked={showArchivedInAutocomplete}
+                onChange={e => setShowArchivedInAutocomplete(e.target.checked)}
+                className="accent-primary"
+              />
+              {t('setup.showArchived')}
+            </label>
+          )}
+        </div>
         <div className="space-y-2">
           {playerNames.map((pName, i) => {
             const isAutoGrowSlot = i === playerNames.length - 1 && pName.trim() === ''
@@ -341,16 +423,16 @@ export function SetupPage() {
                   <span className="text-sm text-text-muted w-7 text-right tabular-nums">{i + 1}.</span>
                 )}
                 {isAutoGrowSlot && <span className="w-7" />}
-                <input
-                  ref={el => { playerRefs.current[i] = el }}
-                  type="text"
+                <PlayerAutocomplete
                   value={pName}
-                  onChange={e => updatePlayer(i, e.target.value)}
+                  onChange={v => updatePlayer(i, v)}
+                  onSelect={player => handleAutocompleteSelect(i, player)}
                   onKeyDown={e => handlePlayerKeyDown(i, e)}
+                  registeredPlayers={registeredPlayers}
+                  selectedPlayerIds={selectedPlayerIds}
                   placeholder={isAutoGrowSlot ? t('setup.addPlayer') : t('setup.playerPlaceholder', { n: i + 1 })}
-                  className={`flex-1 px-4 py-3 border rounded-lg text-base bg-surface-input text-text focus:outline-none focus:border-border-focus focus:ring-1 focus:ring-border-focus ${
-                    isAutoGrowSlot ? 'border-dashed border-border/50' : 'border-border'
-                  }`}
+                  inputRef={el => { playerRefs.current[i] = el }}
+                  isAutoGrowSlot={isAutoGrowSlot}
                 />
                 {!isAutoGrowSlot && (
                   <button
