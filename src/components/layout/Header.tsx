@@ -32,6 +32,7 @@ export function Header() {
               {navItems.map(item => {
                 if (item.requiresTournament && !hasTournament) return null
                 if (item.page === 'leaderboard' && state.tournament?.phase !== 'finished') return null
+                if (item.page === 'round' && state.tournament?.phase === 'finished') return null
                 if (item.page === 'playerDetail') return null
                 const isActive = state.currentPage === item.page || (item.page === 'players' && state.currentPage === 'playerDetail')
                 return (
