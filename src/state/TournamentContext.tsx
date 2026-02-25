@@ -29,7 +29,7 @@ export function TournamentProvider({ children }: { children: ReactNode }) {
     } else if (state.tournament && state.tournament.phase === 'finished') {
       document.title = `Results - ${state.tournament.name}`
     } else {
-      document.title = 'Padel Tournament Scheduler'
+      document.title = 'PadelGaudi \u2014 Padel Tournament Scheduler'
     }
   }, [state.tournament, state.viewingRound])
 

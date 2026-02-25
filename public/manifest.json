@@ -1,0 +1,27 @@
+{
+  "name": "PadelGaudi - Padel Tournament Scheduler",
+  "short_name": "PadelGaudi",
+  "description": "Fair padel tournament scheduling with automatic partner & opponent rotation, scoring, and leaderboard.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1310",
+  "theme_color": "#0d7c4a",
+  "lang": "de",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

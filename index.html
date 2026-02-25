@@ -1,12 +1,88 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>PadelGaudi — Padel Tournament Scheduler / Padel Turnier Planer</title>
+    <meta name="description" content="Padel Turnier Planer — Faire Spielpläne mit automatischer Partner- und Gegner-Rotation, Punktevergabe und Rangliste. Kostenlos, kein Login nötig. / Padel tournament scheduler with fair partner & opponent rotation, scoring, and leaderboard. Free, no login required." />
+    <meta name="keywords" content="padel, tournament, scheduler, turnier, planer, americano, padel americano, court rotation, partner rotation, padel turnier planer, padel tournament organizer, PadelGaudi" />
+
+    <link rel="canonical" href="https://padel-gaudi.pages.dev/" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Oida Padel</title>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0d1310" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="PadelGaudi — Padel Tournament Scheduler" />
+    <meta property="og:description" content="Fair padel tournament scheduling with automatic partner & opponent rotation, multiple scoring modes, and live leaderboard. Free, no login required." />
+    <meta property="og:url" content="https://padel-gaudi.pages.dev/" />
+    <meta property="og:image" content="https://padel-gaudi.pages.dev/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="PadelGaudi - Padel Tournament Scheduler" />
+    <meta property="og:locale" content="de_AT" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:site_name" content="PadelGaudi" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="PadelGaudi — Padel Tournament Scheduler" />
+    <meta name="twitter:description" content="Fair padel tournament scheduling with automatic partner & opponent rotation, multiple scoring modes, and live leaderboard." />
+    <meta name="twitter:image" content="https://padel-gaudi.pages.dev/og-image.png" />
+    <meta name="twitter:image:alt" content="PadelGaudi - Padel Tournament Scheduler" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "PadelGaudi",
+      "alternateName": "Padel Tournament Scheduler",
+      "description": "Free padel tournament scheduler with fair partner and opponent rotation, multiple scoring modes, live leaderboard, and player statistics tracking.",
+      "url": "https://padel-gaudi.pages.dev/",
+      "applicationCategory": "SportsApplication",
+      "operatingSystem": "Any (Web Browser)",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      "inLanguage": ["de", "en"],
+      "browserRequirements": "Requires JavaScript. Works in all modern browsers.",
+      "screenshot": "https://padel-gaudi.pages.dev/og-image.png",
+      "featureList": [
+        "Automatic partner and opponent rotation",
+        "Multiple scoring modes (points, win/loss, timed, points to win)",
+        "Live leaderboard and player rankings",
+        "Monte Carlo schedule optimization",
+        "Player groups and statistics tracking",
+        "Works offline after initial load",
+        "No account required"
+      ]
+    }
+    </script>
   </head>
   <body>
+    <noscript>
+      <div style="max-width:600px;margin:40px auto;padding:20px;font-family:system-ui,sans-serif;color:#e8ece9;background:#161e1a;border-radius:12px;">
+        <h1 style="color:#f0c040;">PadelGaudi</h1>
+        <h2>Padel Tournament Scheduler</h2>
+        <p>A free tool for organizing padel tournaments with fair partner and opponent rotation.</p>
+        <ul>
+          <li>Automatic round scheduling with Monte Carlo optimization</li>
+          <li>Multiple scoring modes: points, win/loss, timed, points to win</li>
+          <li>Live leaderboard with rankings</li>
+          <li>Player groups and historical statistics</li>
+          <li>Works entirely in your browser — no account needed</li>
+        </ul>
+        <p><strong>Please enable JavaScript to use this application.</strong></p>
+        <hr style="border-color:#2a3a30;" />
+        <p><em>Padel Turnier Planer — Faire Spielpläne mit automatischer Partner- und Gegner-Rotation. Kostenlos, direkt im Browser, kein Login nötig.</em></p>
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
