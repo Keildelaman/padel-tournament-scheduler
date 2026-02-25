@@ -1,4 +1,4 @@
-# OidaPadel
+# PadelGaudi
 
 Padel tournament scheduler for our Vienna crew. Handles court assignments, fair partner/opponent rotation, scoring, and leaderboard tracking.
 

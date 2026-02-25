@@ -6,7 +6,7 @@ export const de: TranslationMap = {
   'nav.rounds': 'Runden',
   'nav.leaderboard': 'Rangliste',
   'nav.simulator': 'Simulator',
-  'nav.fallbackTitle': 'OidaPadel',
+  'nav.fallbackTitle': 'PadelGaudi',
 
   // Setup page
   'setup.title': 'Neues Turnier',
