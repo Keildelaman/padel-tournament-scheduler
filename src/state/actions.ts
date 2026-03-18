@@ -1,6 +1,6 @@
 import type { Player, ScoringConfig, Round } from '../types'
 
-export type Page = 'setup' | 'round' | 'leaderboard' | 'players' | 'playerDetail' | 'playerGroups' | 'simulator' | 'tournamentResult'
+export type Page = 'setup' | 'round' | 'leaderboard' | 'players' | 'playerDetail' | 'playerGroups' | 'simulator' | 'tournamentResult' | 'scout'
 
 export type TournamentAction =
   | { type: 'START_TOURNAMENT'; payload: { name: string; players: Player[]; courts: number; totalRounds: number; scoringConfig: ScoringConfig; rounds: Round[]; openEnded?: boolean; courtNames?: string[] } }

@@ -10,6 +10,7 @@ const navItems: { page: Page; labelKey: string; requiresTournament: boolean }[] 
   { page: 'players', labelKey: 'nav.players', requiresTournament: false },
   { page: 'playerGroups', labelKey: 'nav.playerGroups', requiresTournament: false },
   { page: 'simulator', labelKey: 'nav.simulator', requiresTournament: false },
+  { page: 'scout', labelKey: 'nav.scout', requiresTournament: false },
 ]
 
 export function Header() {
